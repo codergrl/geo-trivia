@@ -8,6 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <esri:SceneView Scene="{x:Bind ViewModel.Scene, Mode=OneWay}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <esri:SceneView Scene="{x:Bind ViewModel.Scene, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="3" IsAttributionTextVisible="False"/>
+        <StackPanel Background="#0080B6" Opacity=".85" Grid.Row="1" HorizontalAlignment="Center"  >
+            <TextBlock Opacity="1" Text="In what country was Albert Einstein born?" FontSize="30" FontWeight="SemiBold" Margin="50,20, 50, 20" Foreground="White"/>
+        </StackPanel>
     </Grid>
 </Page>
