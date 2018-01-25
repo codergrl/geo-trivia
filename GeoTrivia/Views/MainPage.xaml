@@ -1,0 +1,112 @@
+﻿<Page
+    x:Class="GeoTrivia.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:GeoTrivia"
+    xmlns:esri="using:Esri.ArcGISRuntime.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:converters="using:GeoTrivia.Converters"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <ResourceDictionary>
+            <converters:GameModeToVisibilityConverter x:Key="GameModeToVisibilityConverter"/>
+        </ResourceDictionary>
+    </Page.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="25*"/>
+        </Grid.RowDefinitions>
+        <esri:SceneView Scene="{x:Bind ViewModel.Scene, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="3" IsAttributionTextVisible="False"/>
+        <!--Question numbers panel-->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
+            <TextBlock Text="1" Foreground="White" FontWeight="Bold" FontSize="30" Margin="10, 10, 0, 0"/>
+            <TextBlock Text=" of 5" Foreground="White" FontWeight="Bold" FontSize="30" Margin="0, 10, 10, 0"/>
+        </StackPanel>
+        <!--Points panel-->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
+            <TextBlock Text="1" Foreground="White" FontWeight="Bold" FontSize="30" Margin="10, 10, 0, 0"/>
+            <TextBlock Text=" point(s)" Foreground="White" FontWeight="Bold" FontSize="30" Margin="0, 10, 10, 0"/>
+        </StackPanel>
+        <!-- Question panel -->
+        <StackPanel Background="#0080B6" Opacity=".85" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"
+                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
+            <TextBlock Text="Four US cities have volcanoes within the city limits: Honolulu, Hawaii, Portland, Oregon, Bend, Oregon and this city." TextWrapping="Wrap" FontSize="30" FontWeight="SemiBold" Margin="100,20, 100, 20" Foreground="White"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </StackPanel>
+        <!--Pin image-->
+        <TextBlock Text="Move the map and tap the pin when it points to your answer." Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 25, 0, 0" Foreground="White" FontWeight="SemiBold"/>
+        <Image Source="ms-appx:///Assets/End.png" Height="100" Width="100" Grid.Row="1" />
+        
+        <!--Choose map difficulty question -->
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" 
+                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=DifficultyScreen}">
+            <TextBlock Text="Select map difficulty" Foreground="White" FontSize="30" Margin="40"/>
+        </StackPanel>
+        <!--Choose map difficulty buttons -->
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity=".95" Grid.Row="1" 
+                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=DifficultyScreen}">
+            <StackPanel Orientation="Horizontal">
+                <Grid Height="200" Width="300" Background="#008963" Margin="50" >
+                    <Grid.Projection>
+                        <PlaneProjection RotationX="-25" RotationY="-15" RotationZ="15"  />
+                    </Grid.Projection>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="40*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Easy" Grid.Row="0" FontWeight="Bold" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
+                    <TextBlock Text="Denial is a river in Egypt, right?" Grid.Row="1" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <i:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Tapped">
+                            <core:InvokeCommandAction Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Easy"/>
+                        </core:EventTriggerBehavior>
+                    </i:Interaction.Behaviors>
+                </Grid>
+                <Grid Height="200" Width="300" Background="#ff4f00" Margin="50">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="40*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Medium" Grid.Row="0" FontWeight="Bold" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
+                    <TextBlock Text="I can get there from here." Grid.Row="1" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <i:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Tapped">
+                            <core:InvokeCommandAction Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Medium"/>
+                        </core:EventTriggerBehavior>
+                    </i:Interaction.Behaviors>
+                </Grid>
+                <Grid Height="200" Width="300" Background="#ff496f" Margin="50">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="40*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Hard" Grid.Row="0" FontWeight="Bold" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
+                    <TextBlock Text="You got Mercator in my WGS84." Grid.Row="1" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <i:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Tapped">
+                            <core:InvokeCommandAction Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Hard"/>
+                        </core:EventTriggerBehavior>
+                    </i:Interaction.Behaviors>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+        <!--Start game button-->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Background="#0080b6" 
+                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=DifficultyScreen}">
+            <TextBlock Text="Start Game" FontWeight="Bold" FontSize="35" Foreground="White" Margin="20, 20, 0, 20"/>
+            <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE72a;" Foreground="White" FontSize="35" Margin="20, 30, 20, 20"/>
+            <i:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="Tapped">
+                    <core:InvokeCommandAction Command="{x:Bind ViewModel.StartGameCommand}" CommandParameter="Medium"/>
+                </core:EventTriggerBehavior>
+            </i:Interaction.Behaviors>
+        </StackPanel>
+    </Grid>
+</Page>

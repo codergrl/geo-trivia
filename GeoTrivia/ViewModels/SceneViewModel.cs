@@ -1,0 +1,122 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using Esri.ArcGISRuntime.Data;
+using Esri.ArcGISRuntime.Geometry;
+using Esri.ArcGISRuntime.Location;
+using Esri.ArcGISRuntime.Mapping;
+using Esri.ArcGISRuntime.Security;
+using Esri.ArcGISRuntime.Symbology;
+using Esri.ArcGISRuntime.Tasks;
+using Esri.ArcGISRuntime.UI;
+using System.Windows.Input;
+using GeoTrivia.Commands;
+
+namespace GeoTrivia
+{
+    /// <summary>
+    /// Provides map data to an application
+    /// </summary>
+    public class SceneViewModel : INotifyPropertyChanged
+    {
+        private ICommand _changeDifficultyCommand;
+        private int _difficulty = 1;
+        private ICommand _startGameCommand;
+        private string _gameMode = "ChooseDifficulty";
+
+        public SceneViewModel()
+        {
+
+        }
+
+        private Scene _scene = new Scene(new Basemap(new Uri("https://www.arcgis.com/home/webmap/viewer.html?webmap=86265e5a4bbb4187a59719cf134e0018")));
+
+        /// <summary>
+        /// Gets or sets the map
+        /// </summary>
+        public Scene Scene
+        {
+            get { return _scene; }
+            set { _scene = value; OnPropertyChanged(); }
+        }
+
+        public string GameMode
+        {
+            get { return _gameMode; }
+            set
+            {
+                if (_gameMode != value )
+                {
+                    _gameMode = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public int Difficulty
+        {
+            get { return _difficulty; }
+            set
+            {
+                _difficulty = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand ChangeDifficultyCommand
+        {
+            get
+            {
+                return _changeDifficultyCommand ?? (_changeDifficultyCommand = new DelegateCommand(
+                    (x) =>
+                    {
+                        switch (x)
+                        {
+                            case "Easy":
+                                Scene.Basemap = new Basemap(new Uri("https://www.arcgis.com/home/webmap/viewer.html?webmap=86265e5a4bbb4187a59719cf134e0018"));
+                                Difficulty = 1;
+                                break;
+                            case "Medium":
+                                Scene.Basemap = new Basemap(new Uri("https://www.arcgis.com/home/webmap/viewer.html?webmap=68a4f59815c745eeb2fa161f6ea0c112"));
+                                Difficulty = 2;
+                                break;
+                            case "Hard":
+                                Scene.Basemap = new Basemap(new Uri("https://www.arcgis.com/home/webmap/viewer.html?useExisting=1&layers=c4ec722a1cd34cf0a23904aadf8923a0"));
+                                Difficulty = 3;
+                                break;
+                        }
+                    }));
+            }
+        }
+
+        public ICommand StartGameCommand
+        {
+            get
+            {
+                return _startGameCommand ?? (_startGameCommand = new DelegateCommand(
+                    (x) =>
+                    {
+                        GameMode = "Playing";
+                        //start loading questions
+                    }));
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="SceneViewModel.PropertyChanged" /> event
+        /// </summary>
+        /// <param name="propertyName">The name of the property that has changed</param>
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var propertyChangedHandler = PropertyChanged;
+            if (propertyChangedHandler != null)
+                propertyChangedHandler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+    }
+}

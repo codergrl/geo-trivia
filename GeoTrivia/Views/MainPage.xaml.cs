@@ -33,7 +33,5 @@ namespace GeoTrivia
         /// Gets the view-model that provides mapping capabilities to the view
         /// </summary>
         public SceneViewModel ViewModel { get; } = new SceneViewModel();
-
-        // Map initialization logic is contained in MapViewModel.cs
     }
 }
