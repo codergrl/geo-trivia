@@ -9,7 +9,7 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:converters="using:GeoTrivia.Converters"
-    mc:Ignorable="d">
+    mc:Ignorable="d" >
     <Page.Resources>
         <ResourceDictionary>
             <converters:GameModeToVisibilityConverter x:Key="GameModeToVisibilityConverter"/>
@@ -41,8 +41,10 @@
                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </StackPanel>
         <!--Pin image-->
-        <TextBlock Text="Move the map and tap the pin when it points to your answer." Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 25, 0, 0" Foreground="White" FontWeight="SemiBold"/>
-        <Image Source="ms-appx:///Assets/End.png" Height="100" Width="100" Grid.Row="1" />
+        <TextBlock Text="Move the map and tap the pin when it points to your answer." Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 25, 0, 0" Foreground="White" FontWeight="SemiBold"
+                   Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}"/>
+        <Image Source="ms-appx:///Assets/pin.png" Height="100" Width="100" Grid.Row="1" 
+               Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}"/>
         
         <!--Choose map difficulty question -->
         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" 
