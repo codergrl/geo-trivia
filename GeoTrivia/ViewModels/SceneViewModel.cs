@@ -28,6 +28,8 @@ namespace GeoTrivia
         private ICommand _startGameCommand;
         private string _gameMode = "ChooseDifficulty";
 
+        private FeatureQueryResult _questionIterator = null;
+
         public SceneViewModel()
         {
             InitializeAsync();
@@ -38,6 +40,12 @@ namespace GeoTrivia
             Scene = new Scene(new Basemap(new Uri("https://www.arcgis.com/home/webmap/viewer.html?webmap=86265e5a4bbb4187a59719cf134e0018")));
             var serviceFeatureTable = new ServiceFeatureTable(new Uri("https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/TriviaMap/FeatureServer/0"));
             await serviceFeatureTable.LoadAsync();
+
+            var query = new QueryParameters();
+            query.WhereClause = "1=1";
+
+            _questionIterator = await serviceFeatureTable.QueryFeaturesAsync(query);
+
             Scene.OperationalLayers.Add(new FeatureLayer(serviceFeatureTable));
         }
 
