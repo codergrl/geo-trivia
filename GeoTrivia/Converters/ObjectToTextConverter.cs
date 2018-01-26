@@ -22,16 +22,21 @@ using Windows.UI.Xaml.Data;
 
 namespace GeoTrivia.Converters
 {
-    class BoolToTextConverter : IValueConverter
+    class ObjectToTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if ((bool)value == true)
+            if (value == null)
+                return null;
+
+            var feedback = value as Feedback;
+            if (feedback.IsCorrect == true)
             {
-                return "Nailed it!";
+                return string.Format("Nailed it!{0}Correct answer is {1}.", Environment.NewLine, feedback.Answer);
             }
             else
-                return "Incorrect";
+                return string.Format("You were off by {0} km!{1}Correct answer is {2}.",
+                    Math.Round(feedback.Distance,0) , Environment.NewLine, feedback.Answer); ;
 
         }
 

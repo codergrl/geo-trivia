@@ -41,6 +41,7 @@ namespace GeoTrivia
         private int _idx = -1;
         private bool _isCorrect;
         private double _userErrorKM = 0;
+        private Feedback _feedback;
 
         public SceneViewModel()
         {
@@ -142,6 +143,18 @@ namespace GeoTrivia
                 CompareAnswerToGeometry();
             }
         }
+
+        public Feedback Feedback
+        {
+            get { return _feedback; }
+            set
+            {
+                _feedback = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         public ICommand ChangeDifficultyCommand
         {
             get
@@ -216,7 +229,10 @@ namespace GeoTrivia
         public double UserErrorKM
         {
             get { return _userErrorKM; }
-            set { _userErrorKM = value; }
+            set {
+                _userErrorKM = value;
+                OnPropertyChanged();
+            }
         }
 
         /// <summary>
@@ -250,6 +266,13 @@ namespace GeoTrivia
             get => _isCorrect;
             set { _isCorrect = value;
                 OnPropertyChanged();
+                Feedback = new Feedback()
+                {
+                    IsCorrect = value,
+                    Distance = UserErrorKM,
+                    Answer = CurrentQuestion.Answer,
+                    FunFact = "This is where the fun fact goes if we decide to add one in."
+                };
             }
         }
 
@@ -304,16 +327,16 @@ namespace GeoTrivia
             var highlightGeometry = GeometryEngine.Buffer(actualGeometry, minDimension * 0.1);
 
             int i = 0;
-            IsCorrect = false;
+            var correct = false;
             UserErrorKM = 0;
-            while (!IsCorrect && i < 3)
+            while (!correct && i < 3)
             {
                 var bufferedGeometry = GeometryEngine.Buffer(actualGeometry, minDimension * (0.5 * i));
-                IsCorrect = GeometryEngine.Contains(bufferedGeometry, UserAnswer);
+                correct = GeometryEngine.Contains(bufferedGeometry, UserAnswer);
                 ++i;
             }
 
-            if (IsCorrect == true)
+            if (correct == true)
             {
                 Points += (Difficulty * (4 - i));
                 _correctAnswerOverlay.Graphics.Add(new Graphic(highlightGeometry));
@@ -325,6 +348,8 @@ namespace GeoTrivia
                 var distanceResult = GeometryEngine.DistanceGeodetic(UserAnswer, actualGeometry.Extent.GetCenter(), LinearUnits.Kilometers, AngularUnits.Degrees, GeodeticCurveType.Geodesic);
                 UserErrorKM = distanceResult.Distance;
             }
+
+            IsCorrect = correct;
 
             _actualAnswerOverlay.Graphics.Add(new Graphic(actualGeometry));
 
