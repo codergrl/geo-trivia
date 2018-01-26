@@ -17,6 +17,15 @@ namespace GeoTrivia
             ViewModel.GraphicsOverlay = SceneView.GraphicsOverlays;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             ViewModel.Scene.Loaded += Scene_Loaded;
+
+            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
+            {
+                ContinueButtonXbox.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+            else
+            {
+                ContinueButtonDesktop.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
 		}
 
         private void Scene_Loaded(object sender, System.EventArgs e)

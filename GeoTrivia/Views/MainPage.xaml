@@ -67,7 +67,8 @@
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0, 0, 0, 25" 
                     Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
             <TextBlock Text="Move the map and tap " Foreground="White" FontWeight="SemiBold"/>
-            <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xF093;" Foreground="White" Margin="5, 5, 5, 5"/>
+            <TextBlock Text="[Space]" Foreground="White" FontWeight="SemiBold" Margin="5, 0, 5, 0" x:Name="ContinueButtonDesktop"/>
+            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xF093;" Foreground="White" Margin="5, 5, 5, 5" x:Name="ContinueButtonXbox"/>
             <TextBlock Text="when it points to your answer." Foreground="White" FontWeight="SemiBold"/>
         </StackPanel>
 
