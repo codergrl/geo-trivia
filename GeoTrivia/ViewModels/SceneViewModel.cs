@@ -98,6 +98,7 @@ namespace GeoTrivia
                 }
             }
 
+            OnPropertyChanged("NumQuestions");
             NextQuestion();
         }
 
@@ -258,6 +259,11 @@ namespace GeoTrivia
         {
             get => _userErrorKM;
             set => _userErrorKM = value;
+        }
+
+        public int NumQuestions
+        {
+            get => (_questions != null ? _questions.Count : 0);
         }
 
         public Question CurrentQuestion
