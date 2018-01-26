@@ -16,7 +16,7 @@
             <converters:GameModeToVisibilityConverter x:Key="GameModeToVisibilityConverter"/>
             <converters:RotationConverter x:Key="RotationConverter"/>
             <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
-            <converters:ObjectToTextConverter x:Key="ObjectToTextConverter"/>
+            <converters:FeedbackToTextConverter x:Key="FeedbackToTextConverter"/>
             <converters:AddOneConverter x:Key="AddOneConverter"/>
             <converters:IntToPointsStringConverter x:Key="IntToPointsStringConverter"/>
             <converters:IntToStringConverter x:Key="IntToStringConverter"/>
@@ -162,7 +162,9 @@
         <!-- Feedback panel -->
         <StackPanel Orientation="Vertical" Background="{x:Bind ViewModel.IsCorrect, Mode=OneWay, Converter={StaticResource BoolToColorConverter}}" Opacity=".85" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"
                     Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=FeedbackScreen}">
-            <TextBlock Text="{x:Bind ViewModel.Feedback, Mode=OneWay, Converter={StaticResource ObjectToTextConverter}}"  TextWrapping="Wrap" FontSize="20" FontWeight="SemiBold" Margin="100,20, 100, 20" Foreground="White"
+            <TextBlock Text="{x:Bind ViewModel.Feedback, Mode=OneWay, Converter={StaticResource FeedbackToTextConverter}}"  TextWrapping="Wrap" FontSize="20" FontWeight="SemiBold" Margin="100, 20, 100, 5" Foreground="White"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock Text="{x:Bind ViewModel.Feedback, Mode=OneWay, Converter={StaticResource FeedbackToTextConverter}, ConverterParameter=CorrectAnswer}"  TextWrapping="Wrap" FontSize="20" FontWeight="SemiBold" Margin="100, 0, 100, 20" Foreground="White"
                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="20, 0, 20, 20" BorderBrush="White" BorderThickness="1">
                 <TextBlock Text="Next Question" FontWeight="Bold" FontSize="30" Foreground="White" Margin="20, 20, 0, 20"/>

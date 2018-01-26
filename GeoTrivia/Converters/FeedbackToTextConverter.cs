@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Data;
 
 namespace GeoTrivia.Converters
 {
-    class ObjectToTextConverter : IValueConverter
+    class FeedbackToTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -30,14 +30,22 @@ namespace GeoTrivia.Converters
                 return null;
 
             var feedback = value as Feedback;
-            if (feedback.IsCorrect == true)
+
+            if (parameter != null && parameter.ToString() == "CorrectAnswer")
             {
-                return string.Format("Nailed it!{0}Correct answer is {1}.", Environment.NewLine, feedback.Answer);
+                return string.Format("The correct answer is {0}.", feedback.Answer);
             }
             else
-                return string.Format("You were off by {0} km!{1}Correct answer is {2}.",
-                    Math.Round(feedback.Distance,0) , Environment.NewLine, feedback.Answer); ;
-
+            {
+                if (feedback.IsCorrect == true)
+                {
+                    return "Nailed it!";
+                }
+                else
+                {
+                    return string.Format("You were off by {0} km!", Math.Round(feedback.Distance, 0));
+                }
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
