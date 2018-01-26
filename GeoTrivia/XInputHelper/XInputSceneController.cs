@@ -3,6 +3,8 @@ using Esri.ArcGISRuntime.Geometry;
 using SharpDX.XInput;
 using System;
 using Windows.UI.Xaml;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace XInputHelper
 {
@@ -21,7 +23,7 @@ namespace XInputHelper
 	//
 	//
 	//
-	public class XInputSceneController
+	public class XInputSceneController : INotifyPropertyChanged
 	{
 		private SceneView sceneView;
 		private DispatcherTimer timer;
@@ -48,10 +50,44 @@ namespace XInputHelper
 			{
 				this.sceneView.Loaded += _sceneView_Loaded;
 				this.sceneView.Unloaded += _sceneView_Unloaded;
-				Start(); //We should only start if already loaded, but no way to detect that currently
+				//Start(); //We should only start if already loaded, but no way to detect that currently
 			}
 		}
-		private void Start()
+
+        private string _gameMode;
+
+        public string GameMode
+        {
+            get { return _gameMode; }
+            set { _gameMode = value;
+                OnPropertyChanged();
+
+                if (_gameMode != "Playing")
+                {
+                    this.Stop();
+                }
+                else
+                {
+                    this.Start();
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Raises the <see cref="SceneViewModel.PropertyChanged" /> event
+        /// </summary>
+        /// <param name="propertyName">The name of the property that has changed</param>
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var propertyChangedHandler = PropertyChanged;
+            if (propertyChangedHandler != null)
+                propertyChangedHandler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void Start()
 		{
 			if(timer == null)
 			{
@@ -192,7 +228,7 @@ namespace XInputHelper
 
 		private void _sceneView_Loaded(object sender, RoutedEventArgs e)
 		{
-			Start();
+			//Start();
 		}
 
 		public static XInputSceneController GetController(DependencyObject obj)

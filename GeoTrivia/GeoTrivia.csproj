@@ -99,6 +99,7 @@
     <Compile Include="Converters\AddOneConverter.cs" />
     <Compile Include="Converters\BoolToColorConverter.cs" />
     <Compile Include="Converters\FeedbackToTextConverter.cs" />
+    <Compile Include="Converters\GameModeToBoolConverter.cs" />
     <Compile Include="Converters\IntToStringConverter.cs" />
     <Compile Include="Converters\GameModeToVisibilityConverter.cs" />
     <Compile Include="Converters\IntToPointsStringConverter.cs" />
