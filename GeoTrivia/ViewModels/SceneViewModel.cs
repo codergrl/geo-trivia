@@ -385,7 +385,7 @@ namespace GeoTrivia
             var minDimension = Math.Min(actualGeometry.Extent.Width, actualGeometry.Extent.Height);
 
             // Determine if the user was correct or not by testing the point inside the polygon, first
-            // unbuffered, then by an increasing amout of buffer
+            // unbuffered, then by an increasing amount of buffer
             int i = 0;
             var correct = false;
             UserErrorKM = 0;
