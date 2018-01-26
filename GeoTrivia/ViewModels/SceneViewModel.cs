@@ -139,11 +139,11 @@ namespace GeoTrivia
                         switch (x)
                         {
                             case "Easy":
-                                Scene.Basemap = Basemap.CreateImageryWithLabels();
+                                Scene.Basemap = Basemap.CreateNationalGeographic();
                                 Difficulty = 100;
                                 break;
                             case "Medium":
-                                Scene.Basemap = Basemap.CreateLightGrayCanvas();
+                                Scene.Basemap = new Basemap(new ArcGISTiledLayer(new Uri("https://wtb.maptiles.arcgis.com/arcgis/rest/services/World_Topo_Base/MapServer")));
                                 Difficulty = 250;
                                 break;
                             case "Hard":
