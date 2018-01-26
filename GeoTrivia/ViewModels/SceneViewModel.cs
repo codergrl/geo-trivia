@@ -30,6 +30,7 @@ namespace GeoTrivia
         private MapPoint _userAnswer;
         private ICommand _startGameCommand;
         private ICommand _submitAnswerCommand;
+        private ICommand _nextQuestionCommand;
         private string _gameMode = "ChooseDifficulty";
         private GraphicsOverlayCollection _graphicsOverlays = null;
         private GraphicsOverlay _correctAnswerOverlay = null;
@@ -37,6 +38,7 @@ namespace GeoTrivia
         private List<Feature> _questions = null;
         private Question _currentQuestion = null;
         private int _idx = -1;
+        private bool _isCorrect;
 
         public SceneViewModel()
         {
@@ -177,6 +179,19 @@ namespace GeoTrivia
             }
         }
 
+        public ICommand NextQuestionCommand
+        {
+            get
+            {
+                return _nextQuestionCommand ?? (_nextQuestionCommand = new DelegateCommand(
+                    (x) =>
+                    {
+                        GameMode = "Playing";
+                        NextQuestion();
+                    }));
+            }
+        }
+
         public GraphicsOverlayCollection GraphicsOverlay
         {
             get { return _graphicsOverlays; }
@@ -206,6 +221,14 @@ namespace GeoTrivia
                     _currentQuestion = value;
                     OnPropertyChanged();
                 }
+            }
+        }
+
+        public bool IsCorrect
+        {
+            get => _isCorrect;
+            set { _isCorrect = value;
+                OnPropertyChanged();
             }
         }
 
@@ -241,8 +264,8 @@ namespace GeoTrivia
             var actualGeometry = CurrentQuestion.Geometry;
             var bufferedGeometry = GeometryEngine.Buffer(actualGeometry, 0.5);
 
-            var x = GeometryEngine.Contains(actualGeometry, UserAnswer);
-            if (x == true)
+            IsCorrect = GeometryEngine.Contains(actualGeometry, UserAnswer);
+            if (IsCorrect == true)
             {
                 Points = Points + Difficulty;
                 _correctAnswerOverlay.Graphics.Add(new Graphic(bufferedGeometry));
@@ -253,7 +276,7 @@ namespace GeoTrivia
             }
 
             GameMode = "AnswerSubmitted";
-            NextQuestion();
+            
         }
 
         private void InitializeOverlays()
