@@ -117,7 +117,11 @@ namespace GeoTrivia
         public string EndOfGameMessage
         {
             get { return _endOfGameMessage; }
-            private set { _endOfGameMessage = value; }
+            set
+            {
+                _endOfGameMessage = value;
+                OnPropertyChanged();
+            }
         }
 
         public string GameMode
@@ -365,7 +369,19 @@ namespace GeoTrivia
             {
                 var percentCorrect = (double)Points / (double)MaximumPossiblePoints() * 100.0;
 
-                EndOfGameMessage = "Congratulations!  You got " + Convert.ToString(50) + " Points!  That's " + Convert.ToString(Math.Round(percentCorrect)) + "%";
+                if (percentCorrect <= 30.0)
+                {
+                    EndOfGameMessage = "Maybe try harder next time.  You got " + Convert.ToString(Points) + " Points.";
+                }
+                else if (percentCorrect <= 80.0)
+                {
+                    EndOfGameMessage = "OK, you know your way around.  You got " + Convert.ToString(Points) + " Points!  That's " + Convert.ToString(Math.Round(percentCorrect)) + "%";
+                }
+                else
+                {
+                    EndOfGameMessage = "Do you want a job?  You got " + Convert.ToString(Points) + " Points!  That's " + Convert.ToString(Math.Round(percentCorrect)) + "%";
+                }
+
                 GameMode = "GameOver";
             }
         }
