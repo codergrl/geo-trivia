@@ -148,7 +148,7 @@ namespace GeoTrivia
 
         public event NewQuestionEvent NewQuestion;
 
-        private async void NextQuestion()
+        public async void NextQuestion()
         {
             _idx += 1;
             if (_idx < _questions.Count)
