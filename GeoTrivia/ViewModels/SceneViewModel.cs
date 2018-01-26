@@ -33,15 +33,18 @@ namespace GeoTrivia
         private ICommand _nextQuestionCommand;
         private string _gameMode = "ChooseDifficulty";
         private GraphicsOverlayCollection _graphicsOverlays = null;
+        private GraphicsOverlay _guessOverlay = null;
         private GraphicsOverlay _actualAnswerOverlay = null;
         private GraphicsOverlay _correctAnswerOverlay = null;
         private GraphicsOverlay _incorrectAnswerOverlay = null;
-        private List<Feature> _questions = null;
+        private GraphicsOverlay _incorrectLineOverlay = null;
+        private List<Question> _questions = null;
         private Question _currentQuestion = null;
         private int _idx = -1;
         private bool _isCorrect;
         private double _userErrorKM = 0;
         private Feedback _feedback;
+        private Geometry _zoomToGeometry = null;
 
         public SceneViewModel()
         {
@@ -51,19 +54,33 @@ namespace GeoTrivia
         private async Task InitializeAsync()
         {
             Scene = new Scene(Basemap.CreateImageryWithLabels());
+            LoadQuestions();
+        }
 
+        private async void LoadQuestions()
+        {
             var serviceFeatureTable = new ServiceFeatureTable(new Uri("https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/TriviaMap/FeatureServer/0"));
             await serviceFeatureTable.LoadAsync();
-
-            var featureLayer = new FeatureLayer(serviceFeatureTable);
-            featureLayer.DefinitionExpression = "1 = 0";
-            Scene.OperationalLayers.Add(featureLayer);
 
             var query = new QueryParameters();
             query.WhereClause = "1=1";
 
             var features = await serviceFeatureTable.QueryFeaturesAsync(query);
-            _questions = features.ToList();
+            var questions = features.ToList();
+
+            _questions = new List<Question>();
+            foreach (ArcGISFeature question in questions)
+            {
+                await question.LoadAsync();
+
+                var text = question.Attributes["Question"];
+                var answer = question.Attributes["Answer"];
+                if (question != null && answer != null)
+                {
+                    _questions.Add(new Question(text.ToString(), answer.ToString(), question.Geometry));
+                }
+            }
+
             NextQuestion();
         }
 
@@ -261,6 +278,12 @@ namespace GeoTrivia
             }
         }
 
+        public Geometry ZoomToGeometry
+        {
+            get { return _zoomToGeometry; }
+            set { _zoomToGeometry = value; }
+        }
+
         public bool IsCorrect
         {
             get => _isCorrect;
@@ -282,6 +305,11 @@ namespace GeoTrivia
 
         public async void NextQuestion()
         {
+            if (_guessOverlay != null)
+            {
+                _guessOverlay.Graphics.Clear();
+            }
+
             if (_actualAnswerOverlay != null)
             {
                 _actualAnswerOverlay.Graphics.Clear();
@@ -297,25 +325,26 @@ namespace GeoTrivia
                 _incorrectAnswerOverlay.Graphics.Clear();
             }
 
+            if (_incorrectLineOverlay != null)
+            {
+                _incorrectLineOverlay.Graphics.Clear();
+            }
+
             Idx += 1;
             if (Idx < _questions.Count)
             {
-                var curQuestion = _questions[Idx] as ArcGISFeature;
-                await curQuestion.LoadAsync();
-
-                var question = curQuestion.Attributes["Question"];
-                var answer = curQuestion.Attributes["Answer"];
-                if (question != null && answer != null)
-                {
-                    CurrentQuestion = new Question(curQuestion.Attributes["Question"].ToString(), curQuestion.Attributes["Answer"].ToString(), curQuestion.Geometry);
-                    NewQuestion?.Invoke();
-                }
+                CurrentQuestion = _questions[Idx];
+                NewQuestion?.Invoke();
             }
         }
 
         private void CompareAnswerToGeometry()
         {
-            if (_actualAnswerOverlay == null || _correctAnswerOverlay == null || _incorrectAnswerOverlay == null)
+            if (_guessOverlay == null ||
+                _actualAnswerOverlay == null || 
+                _correctAnswerOverlay == null || 
+                _incorrectAnswerOverlay == null ||
+                _incorrectLineOverlay == null)
             {
                 InitializeOverlays();
             }
@@ -340,12 +369,26 @@ namespace GeoTrivia
             {
                 Points += (Difficulty * (4 - i));
                 _correctAnswerOverlay.Graphics.Add(new Graphic(highlightGeometry));
+
+                _zoomToGeometry = GeometryEngine.Buffer(actualGeometry, actualGeometry.Extent.Width);
             }
             else
             {
                 _incorrectAnswerOverlay.Graphics.Add(new Graphic(highlightGeometry));
 
-                var distanceResult = GeometryEngine.DistanceGeodetic(UserAnswer, actualGeometry.Extent.GetCenter(), LinearUnits.Kilometers, AngularUnits.Degrees, GeodeticCurveType.Geodesic);
+                _guessOverlay.Graphics.Add(new Graphic(UserAnswer));
+
+                var actualCenter = actualGeometry.Extent.GetCenter();
+
+                var builder = new PolylineBuilder(SpatialReference.Create(4326));
+                builder.AddPoint(UserAnswer);
+                builder.AddPoint(actualCenter);
+
+                var line = builder.ToGeometry();
+                _zoomToGeometry = GeometryEngine.Buffer(line, line.Extent.Width * 0.25);
+                _incorrectLineOverlay.Graphics.Add(new Graphic(line));
+
+                var distanceResult = GeometryEngine.DistanceGeodetic(UserAnswer, actualCenter, LinearUnits.Kilometers, AngularUnits.Degrees, GeodeticCurveType.Geodesic);
                 UserErrorKM = distanceResult.Distance;
             }
 
@@ -377,6 +420,16 @@ namespace GeoTrivia
             _actualAnswerOverlay = new GraphicsOverlay();
             _actualAnswerOverlay.Renderer = new SimpleRenderer(actualGeometrySymbol);
             GraphicsOverlay.Add(_actualAnswerOverlay);
+
+            var guessSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.X, Windows.UI.Color.FromArgb(255, 255, 0, 0), 80.0);
+            _guessOverlay = new GraphicsOverlay();
+            _guessOverlay.Renderer = new SimpleRenderer(guessSymbol);
+            GraphicsOverlay.Add(_guessOverlay);
+
+            var incorrectLineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Dot, Windows.UI.Color.FromArgb(200, 0, 0, 0), 5.0);
+            _incorrectLineOverlay = new GraphicsOverlay();
+            _incorrectLineOverlay.Renderer = new SimpleRenderer(incorrectLineSymbol);
+            GraphicsOverlay.Add(_incorrectLineOverlay);
         }
     }
 }
