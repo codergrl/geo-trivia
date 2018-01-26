@@ -36,6 +36,7 @@ namespace GeoTrivia
         // before considering the guess incorrect
         private const int NUM_BUFFER_ATTEMPTS = 3;
 
+        private Scene _scene;
         private ICommand _changeDifficultyCommand;
         private int _difficulty = DIFFICULTY_EASY;
         private int _points = 0;
@@ -105,30 +106,24 @@ namespace GeoTrivia
             return _questions.Count * NUM_BUFFER_ATTEMPTS * Difficulty;
         }
 
-        private Scene _scene;
-
         /// <summary>
         /// Gets or sets the map
         /// </summary>
         public Scene Scene
         {
-            get { return _scene; }
+            get => _scene;
             set { _scene = value; OnPropertyChanged(); }
         }
 
         public string EndOfGameMessage
         {
-            get { return _endOfGameMessage; }
-            set
-            {
-                _endOfGameMessage = value;
-                OnPropertyChanged();
-            }
+            get => _endOfGameMessage;
+            set { _endOfGameMessage = value; OnPropertyChanged(); }
         }
 
         public string GameMode
         {
-            get { return _gameMode; }
+            get => _gameMode;
             set
             {
                 if (_gameMode != value )
@@ -141,36 +136,26 @@ namespace GeoTrivia
 
         public int Difficulty
         {
-            get { return _difficulty; }
-            set
-            {
-                _difficulty = value;
-                OnPropertyChanged();
-            }
+            get => _difficulty;
+            set { _difficulty = value; OnPropertyChanged(); }
         }
 
         public int Points
         {
-            get { return _points; }
-            set
-            {
-                _points = value;
-                OnPropertyChanged();
-            }
+            get => _points;
+            set { _points = value; OnPropertyChanged(); }
         }
 
         public bool IsSubmitted
         {
-            get { return _isSubmitted; }
-            set { _isSubmitted = value;
-                OnPropertyChanged();
-            }
+            get => _isSubmitted;
+            set { _isSubmitted = value; OnPropertyChanged(); }
 
         }
 
         public int Idx
         {
-            get { return _idx; }
+            get => _idx;
             set
             {
                 if (_idx != value)
@@ -183,7 +168,7 @@ namespace GeoTrivia
 
         public MapPoint UserAnswer
         {
-            get { return _userAnswer; }
+            get => _userAnswer;
             set
             {
                 _userAnswer = value;
@@ -194,14 +179,9 @@ namespace GeoTrivia
 
         public Feedback Feedback
         {
-            get { return _feedback; }
-            set
-            {
-                _feedback = value;
-                OnPropertyChanged();
-            }
+            get => _feedback;
+            set { _feedback = value; OnPropertyChanged(); }
         }
-
 
         public ICommand ChangeDifficultyCommand
         {
@@ -270,17 +250,50 @@ namespace GeoTrivia
 
         public GraphicsOverlayCollection GraphicsOverlay
         {
-            get { return _graphicsOverlays; }
-            set { _graphicsOverlays = value; }
+            get => _graphicsOverlays;
+            set => _graphicsOverlays = value;
         }
 
         public double UserErrorKM
         {
-            get { return _userErrorKM; }
-            set {
-                _userErrorKM = value;
-                OnPropertyChanged();
+            get => _userErrorKM;
+            set => _userErrorKM = value;
+        }
+
+        public Question CurrentQuestion
+        {
+            get => _currentQuestion;
+            set
+            {
+                if (_currentQuestion != value)
+                {
+                    _currentQuestion = value;
+                    OnPropertyChanged();
+                }
             }
+        }
+
+        public bool IsCorrect
+        {
+            get => _isCorrect;
+            set
+            {
+                _isCorrect = value;
+                OnPropertyChanged();
+                Feedback = new Feedback()
+                {
+                    IsCorrect = value,
+                    Distance = UserErrorKM,
+                    Answer = CurrentQuestion.Answer,
+                    FunFact = "This is where the fun fact goes if we decide to add one in."
+                };
+            }
+        }
+
+        public Geometry ZoomToGeometry
+        {
+            get => _zoomToGeometry;
+            set => _zoomToGeometry = value;
         }
 
         /// <summary>
@@ -295,44 +308,6 @@ namespace GeoTrivia
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public Question CurrentQuestion
-        {
-            get { return _currentQuestion; }
-            set
-            {
-                if (_currentQuestion != value)
-                {
-                    _currentQuestion = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public Geometry ZoomToGeometry
-        {
-            get { return _zoomToGeometry; }
-            set { _zoomToGeometry = value; }
-        }
-
-        public bool IsCorrect
-        {
-            get => _isCorrect;
-            set { _isCorrect = value;
-                OnPropertyChanged();
-                Feedback = new Feedback()
-                {
-                    IsCorrect = value,
-                    Distance = UserErrorKM,
-                    Answer = CurrentQuestion.Answer,
-                    FunFact = "This is where the fun fact goes if we decide to add one in."
-                };
-            }
-        }
-
-        public delegate void NewQuestionEvent();
-
-        public event NewQuestionEvent NewQuestion;
 
         public void NextQuestion()
         {
@@ -365,7 +340,6 @@ namespace GeoTrivia
             if (Idx < _questions.Count)
             {
                 CurrentQuestion = _questions[Idx];
-                NewQuestion?.Invoke();
             }
             else
             {
@@ -403,6 +377,8 @@ namespace GeoTrivia
 
             var minDimension = Math.Min(actualGeometry.Extent.Width, actualGeometry.Extent.Height);
 
+            // Determine if the user was correct or not by testing the point inside the polygon, first
+            // unbuffered, then by an increasing amout of buffer
             int i = 0;
             var correct = false;
             UserErrorKM = 0;
@@ -427,16 +403,17 @@ namespace GeoTrivia
                 }
 
                 Points += (Difficulty * ((NUM_BUFFER_ATTEMPTS + 1) - i));
-
                 _zoomToGeometry = GeometryEngine.Buffer(actualGeometry, actualGeometry.Extent.Width);
             }
             else
             {
+                // Highlight the correct answer
                 var highlightGeometry = GeometryEngine.Buffer(actualGeometry, minDimension * 0.1);
                 _incorrectAnswerOverlay.Graphics.Add(new Graphic(highlightGeometry));
 
                 _guessOverlay.Graphics.Add(new Graphic(UserAnswer));
 
+                // Build a polyline between the user's guess and the actual answer
                 var actualCenter = actualGeometry.Extent.GetCenter();
 
                 var builder = new PolylineBuilder(SpatialReference.Create(4326));
@@ -447,14 +424,14 @@ namespace GeoTrivia
                 _zoomToGeometry = GeometryEngine.Buffer(line, line.Extent.Width * 0.25);
                 _incorrectLineOverlay.Graphics.Add(new Graphic(line));
 
+                // Calculate how far they were off in Kilometers
                 var distanceResult = GeometryEngine.DistanceGeodetic(UserAnswer, actualCenter, LinearUnits.Kilometers, AngularUnits.Degrees, GeodeticCurveType.Geodesic);
                 UserErrorKM = distanceResult.Distance;
             }
 
-            IsCorrect = correct;
-
             _actualAnswerOverlay.Graphics.Add(new Graphic(actualGeometry));
 
+            IsCorrect = correct;
             GameMode = "AnswerSubmitted";
         }
 
@@ -490,11 +467,14 @@ namespace GeoTrivia
             _incorrectLineOverlay.Renderer = new SimpleRenderer(incorrectLineSymbol);
             GraphicsOverlay.Add(_incorrectLineOverlay);
 
-            var debugOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, Windows.UI.Colors.AliceBlue, 10.0);
-            var debugSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, Windows.UI.Color.FromArgb(128, outline_gray, outline_gray, outline_gray), debugOutline);
-            _debugOverlay = new GraphicsOverlay();
-            _debugOverlay.Renderer = new SimpleRenderer(debugSymbol);
-            GraphicsOverlay.Add(_debugOverlay);
+            if (_debugOverlayEnabled)
+            {
+                var debugOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, Windows.UI.Colors.AliceBlue, 10.0);
+                var debugSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, Windows.UI.Color.FromArgb(128, outline_gray, outline_gray, outline_gray), debugOutline);
+                _debugOverlay = new GraphicsOverlay();
+                _debugOverlay.Renderer = new SimpleRenderer(debugSymbol);
+                GraphicsOverlay.Add(_debugOverlay);
+            }
         }
     }
 }
