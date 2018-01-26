@@ -26,6 +26,7 @@ namespace GeoTrivia
             ArcGISRuntimeEnvironment.Initialize();
 
             this.InitializeComponent();
+            this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
             this.Suspending += OnSuspending;
         }
 
@@ -65,6 +66,9 @@ namespace GeoTrivia
                     // parameter
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
+                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode
+(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+
                 // Ensure the current window is active
                 Window.Current.Activate();
             }

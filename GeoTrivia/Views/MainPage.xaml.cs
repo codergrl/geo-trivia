@@ -13,6 +13,7 @@ namespace GeoTrivia
 		public MainPage()
 		{
 			this.InitializeComponent();
+            //SceneView.Focus(Windows.UI.Xaml.FocusState.Keyboard);
             ViewModel.GraphicsOverlay = SceneView.GraphicsOverlays;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
