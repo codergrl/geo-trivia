@@ -13,6 +13,7 @@
     <Page.Resources>
         <ResourceDictionary>
             <converters:GameModeToVisibilityConverter x:Key="GameModeToVisibilityConverter"/>
+            <converters:RotationConverter x:Key="RotationConverter"/>
         </ResourceDictionary>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -57,7 +58,9 @@
             <StackPanel Orientation="Horizontal">
                 <Grid Height="200" Width="300" Background="#008963" Margin="50" >
                     <Grid.Projection>
-                        <PlaneProjection RotationX="-25" RotationY="-15" RotationZ="15"  />
+                        <PlaneProjection RotationX="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=1}" 
+                                         RotationY="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=1}"  
+                                         RotationZ="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=1}"   />
                     </Grid.Projection>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60*"/>
@@ -72,6 +75,11 @@
                     </i:Interaction.Behaviors>
                 </Grid>
                 <Grid Height="200" Width="300" Background="#ff4f00" Margin="50">
+                    <Grid.Projection>
+                        <PlaneProjection RotationX="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=2}" 
+                                         RotationY="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=2}"  
+                                         RotationZ="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=2}"   />
+                    </Grid.Projection>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60*"/>
                         <RowDefinition Height="40*"/>
@@ -85,6 +93,11 @@
                     </i:Interaction.Behaviors>
                 </Grid>
                 <Grid Height="200" Width="300" Background="#ff496f" Margin="50">
+                    <Grid.Projection>
+                        <PlaneProjection RotationX="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=3}" 
+                                         RotationY="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=3}"  
+                                         RotationZ="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=3}"   />
+                    </Grid.Projection>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60*"/>
                         <RowDefinition Height="40*"/>
