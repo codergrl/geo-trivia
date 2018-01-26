@@ -28,7 +28,9 @@ namespace GeoTrivia
         private ICommand _startGameCommand;
         private string _gameMode = "ChooseDifficulty";
 
-        private FeatureQueryResult _questionIterator = null;
+        private List<Feature> _questions = null;
+        private Question _currentQuestion = null;
+        private int _idx = -1;
 
         public SceneViewModel()
         {
@@ -44,7 +46,9 @@ namespace GeoTrivia
             var query = new QueryParameters();
             query.WhereClause = "1=1";
 
-            _questionIterator = await serviceFeatureTable.QueryFeaturesAsync(query);
+            var features = await serviceFeatureTable.QueryFeaturesAsync(query);
+            _questions = features.ToList();
+            NextQuestion();
 
             Scene.OperationalLayers.Add(new FeatureLayer(serviceFeatureTable));
         }
@@ -134,5 +138,27 @@ namespace GeoTrivia
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public Question CurrentQuestion
+        {
+            get { return _currentQuestion; }
+        }
+
+        public delegate void NewQuestionEvent();
+
+        public event NewQuestionEvent NewQuestion;
+
+        private async void NextQuestion()
+        {
+            _idx += 1;
+            if (_idx < _questions.Count)
+            {
+                var curQuestion = _questions[_idx] as ArcGISFeature;
+                await curQuestion.LoadAsync();
+
+                _currentQuestion = new Question(curQuestion.Attributes["Question"].ToString(), curQuestion.Attributes["Answer"].ToString(), curQuestion.Geometry);
+                NewQuestion?.Invoke();
+            }
+        }
     }
 }
