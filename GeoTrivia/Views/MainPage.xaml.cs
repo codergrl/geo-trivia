@@ -16,6 +16,7 @@ namespace GeoTrivia
             //SceneView.Focus(Windows.UI.Xaml.FocusState.Keyboard);
             ViewModel.GraphicsOverlay = SceneView.GraphicsOverlays;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
 		}
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -39,5 +40,11 @@ namespace GeoTrivia
         /// Gets the view-model that provides mapping capabilities to the view
         /// </summary>
         public SceneViewModel ViewModel { get; } = new SceneViewModel();
+
+        private void Button_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Space && ViewModel.GameMode == "Playing")
+                ViewModel.SubmitAnswerCommand.Execute(null);
+        }
     }
 }

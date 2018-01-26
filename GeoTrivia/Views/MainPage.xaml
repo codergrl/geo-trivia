@@ -19,6 +19,7 @@
             <converters:ObjectToTextConverter x:Key="ObjectToTextConverter"/>
             <converters:AddOneConverter x:Key="AddOneConverter"/>
             <converters:IntToPointsStringConverter x:Key="IntToPointsStringConverter"/>
+            <converters:GameModeToBoolConverter x:Key="GameModeToBoolConverter"/>
         </ResourceDictionary>
     </Page.Resources>
     <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}">
@@ -27,9 +28,10 @@
             <RowDefinition Height="33*"/>
             <RowDefinition Height="33*"/>
         </Grid.RowDefinitions>
-        <esri:SceneView x:Name="SceneView" RequiresPointer="WhenEngaged" IsFocusEngagementEnabled="True" Scene="{x:Bind ViewModel.Scene, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="3" IsAttributionTextVisible="False">
+        <esri:SceneView x:Name="SceneView" IsFocusEngagementEnabled="False" Scene="{x:Bind ViewModel.Scene, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="3" IsAttributionTextVisible="False"
+                        KeyDown="Button_KeyDown">
             <xinput:XInputSceneController.Controller>
-                <xinput:XInputSceneController />
+                <xinput:XInputSceneController GameMode="{x:Bind ViewModel.GameMode, Mode=OneWay}"  />
             </xinput:XInputSceneController.Controller>
         </esri:SceneView>
 
@@ -58,27 +60,30 @@
             </StackPanel>
         </Grid>
         <!--Pin image-->
-        <TextBlock Text="Move the map and tap the pin when it points to your answer." Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0, 0, 0, 25" Foreground="White" FontWeight="SemiBold"
-                   Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}"/>
+
+        <!--Pin image-->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0, 0, 0, 25" 
+                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
+            <TextBlock Text="Move the map and tap " Foreground="White" FontWeight="SemiBold"/>
+            <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xF093;" Foreground="White" Margin="5, 5, 5, 5"/>
+            <TextBlock Text="when it points to your answer." Foreground="White" FontWeight="SemiBold"/>
+        </StackPanel>
+
         <Image Source="ms-appx:///Assets/pin.png" Height="100" Width="100" Grid.Row="1" 
-               Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
-            <i:Interaction.Behaviors>
-                <core:EventTriggerBehavior EventName="Tapped">
-                    <core:InvokeCommandAction Command="{x:Bind ViewModel.SubmitAnswerCommand}" />
-                </core:EventTriggerBehavior>
-            </i:Interaction.Behaviors>
-        </Image>
-        
+               Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}"/>
+
+
         <!--Choose map difficulty question -->
-        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" 
-                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=DifficultyScreen}">
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center"
+            Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=DifficultyScreen}">
             <TextBlock Text="Select map difficulty" Foreground="White" FontSize="30" Margin="40"/>
         </StackPanel>
         <!--Choose map difficulty buttons -->
         <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity=".95" Grid.Row="1" 
                     Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=DifficultyScreen}">
             <StackPanel Orientation="Horizontal">
-                <Button IsTabStop="True" TabIndex="0" Margin="50" Background="#008963" Height="200" Width="300" >
+                <Button IsTabStop="True" TabIndex="0" Margin="30" Background="#008963" Height="150" Width="250"
+                        Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Easy">
                     <Grid >
                         <Grid.Projection>
                             <PlaneProjection RotationX="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=1}" 
@@ -89,17 +94,17 @@
                             <RowDefinition Height="60*"/>
                             <RowDefinition Height="40*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="Easy" Grid.Row="0" FontWeight="Bold" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
-                        <TextBlock Text="Denial is a river in Egypt, right?" Grid.Row="1" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                        <i:Interaction.Behaviors>
+                        <TextBlock Text="Easy" Grid.Row="0" FontWeight="Bold" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
+                        <TextBlock Text="Denial is a river in Egypt, right?" Grid.Row="1" Foreground="White" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                        <!--<i:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Tapped">
                                 <core:InvokeCommandAction Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Easy"/>
                             </core:EventTriggerBehavior>
-                        </i:Interaction.Behaviors>
+                        </i:Interaction.Behaviors>-->
                     </Grid>
                 </Button>
-                <Button IsTabStop="True" TabIndex="1">
-                    <Grid Height="200" Width="300" Background="#ff4f00" Margin="50">
+                <Button IsTabStop="True" TabIndex="1" Height="150" Width="250" Background="#ff4f00" Margin="30" Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Medium">
+                    <Grid >
                         <Grid.Projection>
                             <PlaneProjection RotationX="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=2}" 
                                          RotationY="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=2}"  
@@ -109,17 +114,17 @@
                             <RowDefinition Height="60*"/>
                             <RowDefinition Height="40*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="Medium" Grid.Row="0" FontWeight="Bold" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
-                        <TextBlock Text="I can get there from here." Grid.Row="1" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                        <i:Interaction.Behaviors>
+                        <TextBlock Text="Medium" Grid.Row="0" FontWeight="Bold" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
+                        <TextBlock Text="I can get there from here." Grid.Row="1" Foreground="White" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                        <!--<i:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Tapped">
                                 <core:InvokeCommandAction Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Medium"/>
                             </core:EventTriggerBehavior>
-                        </i:Interaction.Behaviors>
+                        </i:Interaction.Behaviors>-->
                     </Grid>
                 </Button>
-                <Button IsTabStop="True" TabIndex="2">
-                    <Grid Height="200" Width="300" Background="#ff496f" Margin="50">
+                <Button IsTabStop="True" TabIndex="2" Height="150" Width="250" Background="#ff496f" Margin="30"  Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Hard">
+                    <Grid >
                         <Grid.Projection>
                             <PlaneProjection RotationX="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=3}" 
                                          RotationY="{x:Bind ViewModel.Difficulty, Mode=OneWay, Converter={StaticResource RotationConverter}, ConverterParameter=3}"  
@@ -129,13 +134,13 @@
                             <RowDefinition Height="60*"/>
                             <RowDefinition Height="40*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="Hard" Grid.Row="0" FontWeight="Bold" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
-                        <TextBlock Text="You got Mercator in my WGS84." Grid.Row="1" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                        <i:Interaction.Behaviors>
+                        <TextBlock Text="Hard" Grid.Row="0" FontWeight="Bold" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
+                        <TextBlock Text="You got Mercator in my WGS84." Grid.Row="1" Foreground="White" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                        <!--<i:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Tapped">
                                 <core:InvokeCommandAction Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Hard"/>
                             </core:EventTriggerBehavior>
-                        </i:Interaction.Behaviors>
+                        </i:Interaction.Behaviors>-->
                     </Grid>
                 </Button>
             </StackPanel>
@@ -146,8 +151,8 @@
                 Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=DifficultyScreen}"
                 Command="{x:Bind ViewModel.StartGameCommand}" CommandParameter="Medium">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Start Game" FontWeight="Bold" FontSize="35" Foreground="White" Margin="20, 20, 0, 20"/>
-                <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE72a;" Foreground="White" FontSize="35" Margin="20, 30, 20, 20"/>
+                <TextBlock Text="Start Game" FontWeight="Bold" FontSize="30" Foreground="White" Margin="15, 10, 0, 10"/>
+                <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE72a;" Foreground="White" FontSize="30" Margin="10, 20, 15, 10"/>
                 <!--<i:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Tapped">
                         <core:InvokeCommandAction Command="{x:Bind ViewModel.StartGameCommand}" CommandParameter="Medium"/>
@@ -162,15 +167,18 @@
                     Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=FeedbackScreen}">
             <TextBlock Text="{x:Bind ViewModel.Feedback, Mode=OneWay, Converter={StaticResource ObjectToTextConverter}}"  TextWrapping="Wrap" FontSize="20" FontWeight="SemiBold" Margin="100,20, 100, 20" Foreground="White"
                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="20, 0, 20, 20" BorderBrush="White" BorderThickness="1">
-                <TextBlock Text="Next Question" FontWeight="Bold" FontSize="30" Foreground="White" Margin="20, 20, 0, 20"/>
-                <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE72a;" Foreground="White" FontSize="30" Margin="20, 30, 20, 20"/>
-            </StackPanel>
-            <i:Interaction.Behaviors>
+            <Button IsTabStop="True" TabIndex="0"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20, 0, 20, 20" BorderBrush="White" BorderThickness="1"
+                    Command="{x:Bind ViewModel.NextQuestionCommand, Mode=OneWay}">
+                <StackPanel Orientation="Horizontal" >
+                    <TextBlock Text="Next Question" FontWeight="Bold" FontSize="30" Foreground="White" Margin="20, 20, 0, 20"/>
+                    <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE72a;" Foreground="White" FontSize="30" Margin="20, 30, 20, 20"/>
+                </StackPanel>
+            </Button>
+            <!--<i:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="Tapped">
                     <core:InvokeCommandAction Command="{x:Bind ViewModel.NextQuestionCommand, Mode=OneWay}"/>
                 </core:EventTriggerBehavior>
-            </i:Interaction.Behaviors>
+            </i:Interaction.Behaviors>-->
         </StackPanel>
         
         <!-- Game Over panel -->
