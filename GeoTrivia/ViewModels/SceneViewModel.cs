@@ -463,7 +463,7 @@ namespace GeoTrivia
             _actualAnswerOverlay.Renderer = new SimpleRenderer(actualGeometrySymbol);
             GraphicsOverlay.Add(_actualAnswerOverlay);
 
-            var guessSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.X, Windows.UI.Color.FromArgb(255, 255, 0, 0), 80.0);
+            var guessSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.X, Windows.UI.Color.FromArgb(255, 255, 0, 0), 50.0);
             _guessOverlay = new GraphicsOverlay();
             _guessOverlay.Renderer = new SimpleRenderer(guessSymbol);
             GraphicsOverlay.Add(_guessOverlay);
