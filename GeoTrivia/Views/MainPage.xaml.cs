@@ -9,10 +9,10 @@ namespace GeoTrivia
     /// A map page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
-	{
-		public MainPage()
-		{
-			this.InitializeComponent();
+    {
+        public MainPage()
+        {
+            this.InitializeComponent();
 
             ViewModel.GraphicsOverlay = SceneView.GraphicsOverlays;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -26,7 +26,7 @@ namespace GeoTrivia
             {
                 ContinueButtonDesktop.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
-		}
+        }
 
         private void Scene_Loaded(object sender, System.EventArgs e)
         {
