@@ -49,6 +49,11 @@ namespace GeoTrivia.Converters
                         return Visibility.Visible;
                     else
                         return Visibility.Collapsed;
+                case "GameOverScreen":
+                    if (value.ToString() == "GameOver")
+                        return Visibility.Visible;
+                    else
+                        return Visibility.Collapsed;
                 default:
                     return Visibility.Collapsed;
             }

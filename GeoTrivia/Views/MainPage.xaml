@@ -20,7 +20,7 @@
             <converters:IntToPointsStringConverter x:Key="IntToPointsStringConverter"/>
         </ResourceDictionary>
     </Page.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="33*"/>
             <RowDefinition Height="33*"/>
@@ -158,5 +158,16 @@
                 </core:EventTriggerBehavior>
             </i:Interaction.Behaviors>
         </StackPanel>
+        
+        <!-- Game Over panel -->
+        <StackPanel Orientation="Vertical" Grid.Row="1" Background="#008963" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameOverScreen}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE7Fc;" Foreground="White" FontSize="40" Margin="0, 20, 20, 10"/>
+                <TextBlock Text="GAME OVER" FontSize="40" FontWeight="Bold" Foreground="White" Margin="0,10,0,10"/>
+            </StackPanel>
+            <TextBlock Text="Congratulations, you got 1200 points!" HorizontalAlignment="Center" FontSize="20" FontWeight="SemiBold" Foreground="White" Margin="20,10,20,10"/>
+        </StackPanel>
+        
     </Grid>
 </Page>

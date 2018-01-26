@@ -303,7 +303,7 @@ namespace GeoTrivia
 
         public event NewQuestionEvent NewQuestion;
 
-        public async void NextQuestion()
+        public void NextQuestion()
         {
             if (_guessOverlay != null)
             {
@@ -335,6 +335,10 @@ namespace GeoTrivia
             {
                 CurrentQuestion = _questions[Idx];
                 NewQuestion?.Invoke();
+            }
+            else
+            {
+                GameMode = "GameOver";
             }
         }
 
