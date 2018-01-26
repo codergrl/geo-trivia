@@ -28,6 +28,10 @@ namespace GeoTrivia
         private ICommand _startGameCommand;
         private string _gameMode = "ChooseDifficulty";
 
+        private List<Feature> _questions = null;
+        private Question _currentQuestion = null;
+        private int _idx = -1;
+
         public SceneViewModel()
         {
             InitializeAsync();
@@ -38,6 +42,14 @@ namespace GeoTrivia
             Scene = new Scene(new Basemap(new Uri("https://www.arcgis.com/home/webmap/viewer.html?webmap=86265e5a4bbb4187a59719cf134e0018")));
             var serviceFeatureTable = new ServiceFeatureTable(new Uri("https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/TriviaMap/FeatureServer/0"));
             await serviceFeatureTable.LoadAsync();
+
+            var query = new QueryParameters();
+            query.WhereClause = "1=1";
+
+            var features = await serviceFeatureTable.QueryFeaturesAsync(query);
+            _questions = features.ToList();
+            NextQuestion();
+
             Scene.OperationalLayers.Add(new FeatureLayer(serviceFeatureTable));
         }
 
@@ -126,5 +138,27 @@ namespace GeoTrivia
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public Question CurrentQuestion
+        {
+            get { return _currentQuestion; }
+        }
+
+        public delegate void NewQuestionEvent();
+
+        public event NewQuestionEvent NewQuestion;
+
+        public async void NextQuestion()
+        {
+            _idx += 1;
+            if (_idx < _questions.Count)
+            {
+                var curQuestion = _questions[_idx] as ArcGISFeature;
+                await curQuestion.LoadAsync();
+
+                _currentQuestion = new Question(curQuestion.Attributes["Question"].ToString(), curQuestion.Attributes["Answer"].ToString(), curQuestion.Geometry);
+                NewQuestion?.Invoke();
+            }
+        }
     }
 }
