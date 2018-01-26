@@ -58,6 +58,7 @@ namespace GeoTrivia
         private double _userErrorKM = 0;
         private Feedback _feedback;
         private Geometry _zoomToGeometry = null;
+        private String _endOfGameMessage = "";
 
         public SceneViewModel()
         {
@@ -111,6 +112,12 @@ namespace GeoTrivia
         {
             get { return _scene; }
             set { _scene = value; OnPropertyChanged(); }
+        }
+
+        public string EndOfGameMessage
+        {
+            get { return _endOfGameMessage; }
+            private set { _endOfGameMessage = value; }
         }
 
         public string GameMode
@@ -356,6 +363,9 @@ namespace GeoTrivia
             }
             else
             {
+                var percentCorrect = (double)Points / (double)MaximumPossiblePoints() * 100.0;
+
+                EndOfGameMessage = "Congratulations!  You got " + Convert.ToString(50) + " Points!  That's " + Convert.ToString(Math.Round(percentCorrect)) + "%";
                 GameMode = "GameOver";
             }
         }
