@@ -32,7 +32,7 @@ namespace GeoTrivia
         {
             _text = text;
             _answer = answer;
-            _geom = geom;
+            _geom = GeometryEngine.Project(geom, new SpatialReference(4326));
         }
     }
 }

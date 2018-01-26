@@ -25,7 +25,11 @@ namespace GeoTrivia
     {
         private ICommand _changeDifficultyCommand;
         private int _difficulty = 1;
+        private int _points = 0;
+        private bool _isSubmitted;
+        private MapPoint _userAnswer;
         private ICommand _startGameCommand;
+        private ICommand _submitAnswerCommand;
         private string _gameMode = "ChooseDifficulty";
 
         private List<Feature> _questions = null;
@@ -87,6 +91,36 @@ namespace GeoTrivia
             }
         }
 
+        public int Points
+        {
+            get { return _points; }
+            set
+            {
+                _points = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsSubmitted
+        {
+            get { return _isSubmitted; }
+            set { _isSubmitted = value;
+                OnPropertyChanged();
+            }
+
+        }
+
+        public MapPoint UserAnswer
+        {
+            get { return _userAnswer; }
+            set
+            {
+                _userAnswer = value;
+                OnPropertyChanged();
+                CompareAnswerToGeometry();
+            }
+        }
+
         public ICommand ChangeDifficultyCommand
         {
             get
@@ -126,6 +160,19 @@ namespace GeoTrivia
             }
         }
 
+        public ICommand SubmitAnswerCommand
+        {
+            get
+            {
+                return _submitAnswerCommand ?? (_submitAnswerCommand = new DelegateCommand(
+                    (x) =>
+                    {
+                        //user submitted the answer
+                        IsSubmitted = true;
+                    }));
+            }
+        }
+
         /// <summary>
         /// Raises the <see cref="SceneViewModel.PropertyChanged" /> event
         /// </summary>
@@ -142,6 +189,14 @@ namespace GeoTrivia
         public Question CurrentQuestion
         {
             get { return _currentQuestion; }
+            set
+            {
+                if (_currentQuestion != value)
+                {
+                    _currentQuestion = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public delegate void NewQuestionEvent();
@@ -156,9 +211,18 @@ namespace GeoTrivia
                 var curQuestion = _questions[_idx] as ArcGISFeature;
                 await curQuestion.LoadAsync();
 
-                _currentQuestion = new Question(curQuestion.Attributes["Question"].ToString(), curQuestion.Attributes["Answer"].ToString(), curQuestion.Geometry);
+                CurrentQuestion = new Question(curQuestion.Attributes["Question"].ToString(), curQuestion.Attributes["Answer"].ToString(), curQuestion.Geometry);
                 NewQuestion?.Invoke();
             }
+        }
+
+        private void CompareAnswerToGeometry()
+        {
+            var x = GeometryEngine.Contains(CurrentQuestion.Geometry, UserAnswer);
+            if (x == true)
+                Points++;
+
+            NextQuestion();
         }
     }
 }
