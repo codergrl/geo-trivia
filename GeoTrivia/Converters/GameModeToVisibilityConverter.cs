@@ -39,6 +39,16 @@ namespace GeoTrivia.Converters
                         return Visibility.Visible;
                     else
                         return Visibility.Collapsed;
+                case "FeedbackScreen":
+                    if (value.ToString() == "AnswerSubmitted")
+                        return Visibility.Visible;
+                    else
+                        return Visibility.Collapsed;
+                case "PointsBanner":
+                    if (value.ToString() == "AnswerSubmitted" || value.ToString() == "Playing")
+                        return Visibility.Visible;
+                    else
+                        return Visibility.Collapsed;
                 default:
                     return Visibility.Collapsed;
             }

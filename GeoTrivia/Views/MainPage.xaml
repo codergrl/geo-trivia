@@ -23,24 +23,32 @@
             <RowDefinition Height="25*"/>
         </Grid.RowDefinitions>
         <esri:SceneView x:Name="SceneView" Scene="{x:Bind ViewModel.Scene, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="3" IsAttributionTextVisible="False"/>
-        <!--Question numbers panel-->
-        <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top"
-                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
-            <TextBlock Text="1" Foreground="White" FontWeight="Bold" FontSize="30" Margin="10, 10, 0, 0"/>
-            <TextBlock Text=" of 5" Foreground="White" FontWeight="Bold" FontSize="30" Margin="0, 10, 10, 0"/>
-        </StackPanel>
-        <!--Points panel-->
-        <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top"
-                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
-            <TextBlock Text="{x:Bind ViewModel.Points, Mode=OneWay}" Foreground="White" FontWeight="Bold" FontSize="30" Margin="10, 10, 0, 0"/>
-            <TextBlock Text=" point(s)" Foreground="White" FontWeight="Bold" FontSize="30" Margin="0, 10, 10, 0"/>
-        </StackPanel>
-        <!-- Question panel -->
-        <StackPanel Background="#0080B6" Opacity=".85" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"
-                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
-            <TextBlock Text="{x:Bind ViewModel.CurrentQuestion.Text, Mode=OneWay}"  TextWrapping="Wrap" FontSize="30" FontWeight="SemiBold" Margin="100,20, 100, 20" Foreground="White"
-                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </StackPanel>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="80*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+            <!--Question numbers panel-->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0"
+                        Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=PointsBanner}">
+                <TextBlock Text="1" Foreground="White" FontWeight="Bold" FontSize="30" Margin="10, 10, 0, 0"/>
+                <TextBlock Text=" of 5" Foreground="White" FontWeight="Bold" FontSize="30" Margin="0, 10, 10, 0"/>
+            </StackPanel>
+            <!--Points panel-->
+            <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="2"
+                        Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=PointsBanner}">
+                <TextBlock Text="{x:Bind ViewModel.Points, Mode=OneWay}" Foreground="White" FontWeight="Bold" FontSize="30" Margin="10, 10, 0, 0"/>
+                <TextBlock Text=" point(s)" Foreground="White" FontWeight="Bold" FontSize="30" Margin="0, 10, 10, 0"/>
+            </StackPanel>
+            <!-- Question panel -->
+            <StackPanel Background="#0080B6" Opacity=".85" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20" Grid.Column="1"
+                        Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
+                <TextBlock Text="{x:Bind ViewModel.CurrentQuestion.Text, Mode=OneWay}"  TextWrapping="Wrap" FontSize="30" FontWeight="SemiBold" Margin="100,20, 100, 20" Foreground="White"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
         <!--Pin image-->
         <TextBlock Text="Move the map and tap the pin when it points to your answer." Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 25, 0, 0" Foreground="White" FontWeight="SemiBold"
                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}"/>
@@ -129,6 +137,14 @@
                     <core:InvokeCommandAction Command="{x:Bind ViewModel.StartGameCommand}" CommandParameter="Medium"/>
                 </core:EventTriggerBehavior>
             </i:Interaction.Behaviors>
+        </StackPanel>
+
+
+        <!-- Feedback panel -->
+        <StackPanel Background="#0080B6" Opacity=".85" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"
+                    Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=FeedbackScreen}">
+            <TextBlock Text="{x:Bind ViewModel.CurrentQuestion.Text, Mode=OneWay}"  TextWrapping="Wrap" FontSize="30" FontWeight="SemiBold" Margin="100,20, 100, 20" Foreground="White"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </Page>

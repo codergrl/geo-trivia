@@ -55,6 +55,9 @@ namespace GeoTrivia
             NextQuestion();
 
             Scene.OperationalLayers.Add(new FeatureLayer(serviceFeatureTable));
+
+            var featureLayer = Scene.OperationalLayers[0] as FeatureLayer;
+            featureLayer.DefinitionExpression = "1 = 0";
         }
 
         private Scene _scene;
@@ -220,8 +223,9 @@ namespace GeoTrivia
         {
             var x = GeometryEngine.Contains(CurrentQuestion.Geometry, UserAnswer);
             if (x == true)
-                Points++;
+                Points = Points + Difficulty;
 
+            GameMode = "AnswerSubmitted";
             NextQuestion();
         }
     }
