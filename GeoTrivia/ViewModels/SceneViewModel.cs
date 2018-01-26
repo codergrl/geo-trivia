@@ -30,7 +30,7 @@ namespace GeoTrivia
         // Amount we will buffer the actual answer geometry at each step to
         // determine if the user got close enough to the answer to cound as
         // a correct answer
-        private const double BUFFER_FRACTION = 0.5;
+        private const double BUFFER_FRACTION = 0.25;
 
         // Number of times we will try to buffer the feature by BUFFER_FRACTION
         // before considering the guess incorrect
@@ -51,6 +51,7 @@ namespace GeoTrivia
         private GraphicsOverlay _correctAnswerOverlay = null;
         private GraphicsOverlay _incorrectAnswerOverlay = null;
         private GraphicsOverlay _incorrectLineOverlay = null;
+        private GraphicsOverlay _debugOverlay = null;
         private List<Question> _questions = null;
         private Question _currentQuestion = null;
         private int _idx = -1;
@@ -59,6 +60,7 @@ namespace GeoTrivia
         private Feedback _feedback;
         private Geometry _zoomToGeometry = null;
         private String _endOfGameMessage = "";
+        private bool _debugOverlayEnabled = false;
 
         public SceneViewModel()
         {
@@ -401,8 +403,6 @@ namespace GeoTrivia
 
             var minDimension = Math.Min(actualGeometry.Extent.Width, actualGeometry.Extent.Height);
 
-            var highlightGeometry = GeometryEngine.Buffer(actualGeometry, minDimension * 0.1);
-
             int i = 0;
             var correct = false;
             UserErrorKM = 0;
@@ -410,18 +410,29 @@ namespace GeoTrivia
             {
                 var bufferedGeometry = GeometryEngine.Buffer(actualGeometry, minDimension * (BUFFER_FRACTION * i));
                 correct = GeometryEngine.Contains(bufferedGeometry, UserAnswer);
+                if (_debugOverlayEnabled)
+                {
+                    _debugOverlay.Graphics.Add(new Graphic(bufferedGeometry));
+                }
                 ++i;
             }
 
             if (correct == true)
             {
+                var currentHightlight = actualGeometry;
+                for (int j = 0; j < Math.Max(i, 2); ++j)
+                {
+                    currentHightlight = GeometryEngine.Buffer(actualGeometry, minDimension * (BUFFER_FRACTION * j));
+                    _correctAnswerOverlay.Graphics.Add(new Graphic(currentHightlight));
+                }
+
                 Points += (Difficulty * ((NUM_BUFFER_ATTEMPTS + 1) - i));
-                _correctAnswerOverlay.Graphics.Add(new Graphic(highlightGeometry));
 
                 _zoomToGeometry = GeometryEngine.Buffer(actualGeometry, actualGeometry.Extent.Width);
             }
             else
             {
+                var highlightGeometry = GeometryEngine.Buffer(actualGeometry, minDimension * 0.1);
                 _incorrectAnswerOverlay.Graphics.Add(new Graphic(highlightGeometry));
 
                 _guessOverlay.Graphics.Add(new Graphic(UserAnswer));
@@ -478,6 +489,12 @@ namespace GeoTrivia
             _incorrectLineOverlay = new GraphicsOverlay();
             _incorrectLineOverlay.Renderer = new SimpleRenderer(incorrectLineSymbol);
             GraphicsOverlay.Add(_incorrectLineOverlay);
+
+            var debugOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, Windows.UI.Colors.AliceBlue, 10.0);
+            var debugSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, Windows.UI.Color.FromArgb(128, outline_gray, outline_gray, outline_gray), debugOutline);
+            _debugOverlay = new GraphicsOverlay();
+            _debugOverlay.Renderer = new SimpleRenderer(debugSymbol);
+            GraphicsOverlay.Add(_debugOverlay);
         }
     }
 }
