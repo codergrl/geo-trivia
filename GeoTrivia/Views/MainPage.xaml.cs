@@ -51,7 +51,17 @@ namespace GeoTrivia
         private void Button_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Space && ViewModel.GameMode == "Playing")
+            {
                 ViewModel.SubmitAnswerCommand.Execute(null);
+            }
+            else if (ViewModel.GameMode == "AnswerSubmitted" && e.Key == Windows.System.VirtualKey.Space)
+            {
+                ViewModel.NextQuestion();
+                if (ViewModel.GameMode != "GameOver")
+                {
+                    ViewModel.GameMode = "Playing";
+                }
+            }
         }
     }
 }

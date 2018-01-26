@@ -45,19 +45,19 @@
             <!--Question numbers panel-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0"
                         Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=PointsBanner}">
-                <TextBlock Text="{x:Bind ViewModel.Idx, Mode=OneWay, Converter={StaticResource AddOneConverter}}" Foreground="White" FontWeight="Bold" FontSize="30" Margin="10, 10, 0, 0"/>
-                <TextBlock Text=" of" Foreground="White" FontWeight="Bold" FontSize="30" Margin="0, 10, 10, 0"/>
-                <TextBlock Text="{x:Bind ViewModel.NumQuestions, Mode=OneWay, Converter={StaticResource IntToStringConverter}}" Foreground="White" FontWeight="Bold" FontSize="30" Margin="10, 10, 0, 0"/>
+                <TextBlock Text="{x:Bind ViewModel.Idx, Mode=OneWay, Converter={StaticResource AddOneConverter}}" Foreground="White" FontWeight="Bold" FontSize="20" Margin="10, 10, 0, 0"/>
+                <TextBlock Text=" of" Foreground="White" FontWeight="Bold" FontSize="20" Margin="0, 10, 5, 0"/>
+                <TextBlock Text="{x:Bind ViewModel.NumQuestions, Mode=OneWay, Converter={StaticResource IntToStringConverter}}" Foreground="White" FontWeight="Bold" FontSize="20" Margin="0, 10, 0, 0"/>
             </StackPanel>
             <!--Points panel-->
             <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="2"
                         Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=PointsBanner}">
-                <TextBlock Text="{x:Bind ViewModel.Points, Mode=OneWay, Converter={StaticResource IntToPointsStringConverter}}" Foreground="White" FontWeight="Bold" FontSize="30" Margin="0, 10, 10, 0"/>
+                <TextBlock Text="{x:Bind ViewModel.Points, Mode=OneWay, Converter={StaticResource IntToPointsStringConverter}}" Foreground="White" FontWeight="Bold" FontSize="20" Margin="0, 10, 10, 0"/>
             </StackPanel>
             <!-- Question panel -->
             <StackPanel Background="#0080B6" Opacity=".85" HorizontalAlignment="Center" VerticalAlignment="Top"  Grid.Column="1"
                         Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=GameScreen}">
-                <TextBlock Text="{x:Bind ViewModel.CurrentQuestion.Text, Mode=OneWay}"  TextWrapping="Wrap" FontSize="30" FontWeight="SemiBold" Margin="100,20, 100, 20" Foreground="White"
+                <TextBlock Text="{x:Bind ViewModel.CurrentQuestion.Text, Mode=OneWay}"  TextWrapping="Wrap" FontSize="30" FontWeight="SemiBold" Margin="50,10, 50, 20" Foreground="White"
                            VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
@@ -134,7 +134,7 @@
         </StackPanel>
         
         <!--Start game button-->
-        <Button IsTabStop="True" TabIndex="4" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Background="#0080b6" 
+        <Button IsTabStop="True" TabIndex="3" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Background="#0080b6" 
                 Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=DifficultyScreen}"
                 Command="{x:Bind ViewModel.StartGameCommand}" CommandParameter="Medium">
             <StackPanel Orientation="Horizontal">
@@ -151,13 +151,10 @@
                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
             <TextBlock Text="{x:Bind ViewModel.Feedback, Mode=OneWay, Converter={StaticResource FeedbackToTextConverter}, ConverterParameter=CorrectAnswer}"  TextWrapping="Wrap" FontSize="20" FontWeight="SemiBold" Margin="100, 0, 100, 20" Foreground="White"
                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <Button IsTabStop="True" TabIndex="0"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20, 0, 20, 20" BorderBrush="White" BorderThickness="1"
-                    Command="{x:Bind ViewModel.NextQuestionCommand, Mode=OneWay}">
-                <StackPanel Orientation="Horizontal" >
-                    <TextBlock Text="Next Question" FontWeight="Bold" FontSize="30" Foreground="White" Margin="20, 20, 0, 20"/>
-                    <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE72a;" Foreground="White" FontSize="30" Margin="20, 30, 20, 20"/>
-                </StackPanel>
-            </Button>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10, 0, 10, 20" BorderBrush="White" BorderThickness="1">
+                <TextBlock Text="Next Question" FontWeight="Bold" FontSize="20" Foreground="White" Margin="20, 10, 0, 10"/>
+                <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE72a;" Foreground="White" FontSize="20" Margin="10, 15, 20, 15"/>
+            </StackPanel>
         </StackPanel>
         
         <!-- Game Over panel -->
