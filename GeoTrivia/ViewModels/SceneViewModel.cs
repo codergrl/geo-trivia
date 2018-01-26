@@ -47,7 +47,7 @@ namespace GeoTrivia
 
         private async Task InitializeAsync()
         {
-            Scene = new Scene(new Basemap(new Uri("https://www.arcgis.com/home/webmap/viewer.html?webmap=86265e5a4bbb4187a59719cf134e0018")));
+            Scene = new Scene(Basemap.CreateImageryWithLabels());
 
             var serviceFeatureTable = new ServiceFeatureTable(new Uri("https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/TriviaMap/FeatureServer/0"));
             await serviceFeatureTable.LoadAsync();
@@ -115,6 +115,19 @@ namespace GeoTrivia
                 OnPropertyChanged();
             }
 
+        }
+
+        public int Idx
+        {
+            get { return _idx; }
+            set
+            {
+                if (_idx != value)
+                {
+                    _idx = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public MapPoint UserAnswer
@@ -238,10 +251,10 @@ namespace GeoTrivia
 
         public async void NextQuestion()
         {
-            _idx += 1;
-            if (_idx < _questions.Count)
+            Idx += 1;
+            if (Idx < _questions.Count)
             {
-                var curQuestion = _questions[_idx] as ArcGISFeature;
+                var curQuestion = _questions[Idx] as ArcGISFeature;
                 await curQuestion.LoadAsync();
 
                 var question = curQuestion.Attributes["Question"];

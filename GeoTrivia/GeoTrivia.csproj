@@ -96,8 +96,11 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Converters\AddOneConverter.cs" />
     <Compile Include="Converters\BoolToColorConverter.cs" />
+    <Compile Include="Converters\BoolToTextConverter.cs" />
     <Compile Include="Converters\GameModeToVisibilityConverter.cs" />
+    <Compile Include="Converters\IntToPointsStringConverter.cs" />
     <Compile Include="Converters\RotationConverter.cs" />
     <Compile Include="Question.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
