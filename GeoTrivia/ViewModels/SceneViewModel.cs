@@ -243,8 +243,7 @@ namespace GeoTrivia
                 return _nextQuestionCommand ?? (_nextQuestionCommand = new DelegateCommand(
                     (x) =>
                     {
-                        GameMode = "Playing";
-                        NextQuestion();
+
                     }));
             }
         }
