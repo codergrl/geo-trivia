@@ -23,8 +23,21 @@ namespace GeoTrivia
     /// </summary>
     public class SceneViewModel : INotifyPropertyChanged
     {
+        private const int DIFFICULTY_EASY = 100;
+        private const int DIFFICULTY_MEDIUM = 250;
+        private const int DIFFICULTY_HARD = 500;
+
+        // Amount we will buffer the actual answer geometry at each step to
+        // determine if the user got close enough to the answer to cound as
+        // a correct answer
+        private const double BUFFER_FRACTION = 0.5;
+
+        // Number of times we will try to buffer the feature by BUFFER_FRACTION
+        // before considering the guess incorrect
+        private const int NUM_BUFFER_ATTEMPTS = 3;
+
         private ICommand _changeDifficultyCommand;
-        private int _difficulty = 1;
+        private int _difficulty = DIFFICULTY_EASY;
         private int _points = 0;
         private bool _isSubmitted;
         private MapPoint _userAnswer;
@@ -82,6 +95,11 @@ namespace GeoTrivia
             }
 
             NextQuestion();
+        }
+
+        public int MaximumPossiblePoints()
+        {
+            return _questions.Count * NUM_BUFFER_ATTEMPTS * Difficulty;
         }
 
         private Scene _scene;
@@ -183,15 +201,15 @@ namespace GeoTrivia
                         {
                             case "Easy":
                                 Scene.Basemap = Basemap.CreateNationalGeographic();
-                                Difficulty = 100;
+                                Difficulty = DIFFICULTY_EASY;
                                 break;
                             case "Medium":
                                 Scene.Basemap = new Basemap(new ArcGISTiledLayer(new Uri("https://wtb.maptiles.arcgis.com/arcgis/rest/services/World_Topo_Base/MapServer")));
-                                Difficulty = 250;
+                                Difficulty = DIFFICULTY_MEDIUM;
                                 break;
                             case "Hard":
                                 Scene.Basemap = Basemap.CreateImagery();
-                                Difficulty = 500;
+                                Difficulty = DIFFICULTY_HARD;
                                 break;
                         }
                     }));
@@ -362,16 +380,16 @@ namespace GeoTrivia
             int i = 0;
             var correct = false;
             UserErrorKM = 0;
-            while (!correct && i < 3)
+            while (!correct && i < NUM_BUFFER_ATTEMPTS)
             {
-                var bufferedGeometry = GeometryEngine.Buffer(actualGeometry, minDimension * (0.5 * i));
+                var bufferedGeometry = GeometryEngine.Buffer(actualGeometry, minDimension * (BUFFER_FRACTION * i));
                 correct = GeometryEngine.Contains(bufferedGeometry, UserAnswer);
                 ++i;
             }
 
             if (correct == true)
             {
-                Points += (Difficulty * (4 - i));
+                Points += (Difficulty * ((NUM_BUFFER_ATTEMPTS + 1) - i));
                 _correctAnswerOverlay.Graphics.Add(new Graphic(highlightGeometry));
 
                 _zoomToGeometry = GeometryEngine.Buffer(actualGeometry, actualGeometry.Extent.Width);
