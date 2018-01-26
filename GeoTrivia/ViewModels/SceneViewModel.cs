@@ -33,12 +33,14 @@ namespace GeoTrivia
         private ICommand _nextQuestionCommand;
         private string _gameMode = "ChooseDifficulty";
         private GraphicsOverlayCollection _graphicsOverlays = null;
+        private GraphicsOverlay _actualAnswerOverlay = null;
         private GraphicsOverlay _correctAnswerOverlay = null;
         private GraphicsOverlay _incorrectAnswerOverlay = null;
         private List<Feature> _questions = null;
         private Question _currentQuestion = null;
         private int _idx = -1;
         private bool _isCorrect;
+        private double _userErrorKM = 0;
 
         public SceneViewModel()
         {
@@ -150,16 +152,16 @@ namespace GeoTrivia
                         switch (x)
                         {
                             case "Easy":
-                                Scene.Basemap = Basemap.CreateImageryWithLabels();
-                                Difficulty = 1;
+                                Scene.Basemap = Basemap.CreateNationalGeographic();
+                                Difficulty = 100;
                                 break;
                             case "Medium":
-                                Scene.Basemap = Basemap.CreateLightGrayCanvas();
-                                Difficulty = 2;
+                                Scene.Basemap = new Basemap(new ArcGISTiledLayer(new Uri("https://wtb.maptiles.arcgis.com/arcgis/rest/services/World_Topo_Base/MapServer")));
+                                Difficulty = 250;
                                 break;
                             case "Hard":
                                 Scene.Basemap = Basemap.CreateImagery();
-                                Difficulty = 3;
+                                Difficulty = 500;
                                 break;
                         }
                     }));
@@ -211,6 +213,12 @@ namespace GeoTrivia
             set { _graphicsOverlays = value; }
         }
 
+        public double UserErrorKM
+        {
+            get { return _userErrorKM; }
+            set { _userErrorKM = value; }
+        }
+
         /// <summary>
         /// Raises the <see cref="SceneViewModel.PropertyChanged" /> event
         /// </summary>
@@ -251,6 +259,21 @@ namespace GeoTrivia
 
         public async void NextQuestion()
         {
+            if (_actualAnswerOverlay != null)
+            {
+                _actualAnswerOverlay.Graphics.Clear();
+            }
+
+            if (_correctAnswerOverlay != null)
+            {
+                _correctAnswerOverlay.Graphics.Clear();
+            }
+
+            if (_incorrectAnswerOverlay != null)
+            {
+                _incorrectAnswerOverlay.Graphics.Clear();
+            }
+
             Idx += 1;
             if (Idx < _questions.Count)
             {
@@ -269,34 +292,51 @@ namespace GeoTrivia
 
         private void CompareAnswerToGeometry()
         {
-            if (_correctAnswerOverlay == null || _incorrectAnswerOverlay == null)
+            if (_actualAnswerOverlay == null || _correctAnswerOverlay == null || _incorrectAnswerOverlay == null)
             {
                 InitializeOverlays();
             }
 
             var actualGeometry = CurrentQuestion.Geometry;
-            var bufferedGeometry = GeometryEngine.Buffer(actualGeometry, 0.5);
 
-            IsCorrect = GeometryEngine.Contains(actualGeometry, UserAnswer);
+            var minDimension = Math.Min(actualGeometry.Extent.Width, actualGeometry.Extent.Height);
+
+            var highlightGeometry = GeometryEngine.Buffer(actualGeometry, minDimension * 0.1);
+
+            int i = 0;
+            IsCorrect = false;
+            UserErrorKM = 0;
+            while (!IsCorrect && i < 3)
+            {
+                var bufferedGeometry = GeometryEngine.Buffer(actualGeometry, minDimension * (0.5 * i));
+                IsCorrect = GeometryEngine.Contains(bufferedGeometry, UserAnswer);
+                ++i;
+            }
+
             if (IsCorrect == true)
             {
-                Points = Points + Difficulty;
-                _correctAnswerOverlay.Graphics.Add(new Graphic(bufferedGeometry));
+                Points += (Difficulty * (4 - i));
+                _correctAnswerOverlay.Graphics.Add(new Graphic(highlightGeometry));
             }
             else
             {
-                _incorrectAnswerOverlay.Graphics.Add(new Graphic(bufferedGeometry));
+                _incorrectAnswerOverlay.Graphics.Add(new Graphic(highlightGeometry));
+
+                var distanceResult = GeometryEngine.DistanceGeodetic(UserAnswer, actualGeometry.Extent.GetCenter(), LinearUnits.Kilometers, AngularUnits.Degrees, GeodeticCurveType.Geodesic);
+                UserErrorKM = distanceResult.Distance;
             }
 
+            _actualAnswerOverlay.Graphics.Add(new Graphic(actualGeometry));
+
             GameMode = "AnswerSubmitted";
-            
         }
 
         private void InitializeOverlays()
         {
             byte opacity = 180;
+            byte outline_gray = 128;
 
-            var outlineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Dash, Windows.UI.Color.FromArgb(255, 255, 255, 255), 5.0);
+            var outlineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Dash, Windows.UI.Color.FromArgb(255, outline_gray, outline_gray, outline_gray), 5.0);
 
             var correctSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, Windows.UI.Color.FromArgb(opacity, 0, 255, 128), outlineSymbol);
             _correctAnswerOverlay = new GraphicsOverlay();
@@ -307,6 +347,11 @@ namespace GeoTrivia
             _incorrectAnswerOverlay = new GraphicsOverlay();
             _incorrectAnswerOverlay.Renderer = new SimpleRenderer(incorrectSymbol);
             GraphicsOverlay.Add(_incorrectAnswerOverlay);
+
+            var actualGeometrySymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, Windows.UI.Color.FromArgb(255, 255, 255, 255), 3.0);
+            _actualAnswerOverlay = new GraphicsOverlay();
+            _actualAnswerOverlay.Renderer = new SimpleRenderer(actualGeometrySymbol);
+            GraphicsOverlay.Add(_actualAnswerOverlay);
         }
     }
 }
