@@ -18,7 +18,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 
 namespace GeoTrivia.Converters
 {
@@ -27,15 +29,28 @@ namespace GeoTrivia.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if ((bool)value == true)
-                 return "#008963";
+            {
+                return GetSolidColorBrush("#FF008963");
+            }
             else
-                return "#ff4f00";
+                return GetSolidColorBrush("#FFff4f00");
 
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
+        }
+
+        private SolidColorBrush GetSolidColorBrush(string hex)
+        {
+            hex = hex.Replace("#", string.Empty);
+            byte a = (byte)(System.Convert.ToUInt32(hex.Substring(0, 2), 16));
+            byte r = (byte)(System.Convert.ToUInt32(hex.Substring(2, 2), 16));
+            byte g = (byte)(System.Convert.ToUInt32(hex.Substring(4, 2), 16));
+            byte b = (byte)(System.Convert.ToUInt32(hex.Substring(6, 2), 16));
+            SolidColorBrush myBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(a, r, g, b));
+            return myBrush;
         }
     }
 }

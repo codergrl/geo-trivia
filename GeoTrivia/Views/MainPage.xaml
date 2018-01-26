@@ -143,19 +143,19 @@
 
         <!-- Feedback panel -->
         <!-- wrong ff4f00 -->
-        <StackPanel Orientation="Vertical" Background="{x:Bind ViewModel.IsCorrect, Converter={StaticResource BoolToColorConverter}}" Opacity=".85" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"
+        <StackPanel Orientation="Vertical" Background="{x:Bind ViewModel.IsCorrect, Mode=OneWay, Converter={StaticResource BoolToColorConverter}}" Opacity=".85" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"
                     Visibility="{x:Bind ViewModel.GameMode, Mode=OneWay, Converter={StaticResource GameModeToVisibilityConverter}, ConverterParameter=FeedbackScreen}">
             <TextBlock Text="Nailed it!"  TextWrapping="Wrap" FontSize="20" FontWeight="SemiBold" Margin="100,20, 100, 20" Foreground="White"
                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="20, 0, 20, 20" BorderBrush="White" BorderThickness="1">
                 <TextBlock Text="Next Question" FontWeight="Bold" FontSize="30" Foreground="White" Margin="20, 20, 0, 20"/>
                 <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE72a;" Foreground="White" FontSize="30" Margin="20, 30, 20, 20"/>
-                <i:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Tapped">
-                        <core:InvokeCommandAction Command="{x:Bind ViewModel.NextQuestionCommand}" CommandParameter="Medium"/>
-                    </core:EventTriggerBehavior>
-                </i:Interaction.Behaviors>
             </StackPanel>
+            <i:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="Tapped">
+                    <core:InvokeCommandAction Command="{x:Bind ViewModel.NextQuestionCommand, Mode=OneWay}"/>
+                </core:EventTriggerBehavior>
+            </i:Interaction.Behaviors>
         </StackPanel>
     </Grid>
 </Page>
