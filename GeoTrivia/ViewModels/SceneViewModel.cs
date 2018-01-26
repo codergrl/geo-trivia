@@ -107,9 +107,7 @@ namespace GeoTrivia
             return _questions.Count * NUM_BUFFER_ATTEMPTS * Difficulty;
         }
 
-        /// <summary>
-        /// Gets or sets the map
-        /// </summary>
+        #region Properties
         public Scene Scene
         {
             get => _scene;
@@ -184,6 +182,61 @@ namespace GeoTrivia
             set { _feedback = value; OnPropertyChanged(); }
         }
 
+        public GraphicsOverlayCollection GraphicsOverlay
+        {
+            get => _graphicsOverlays;
+            set => _graphicsOverlays = value;
+        }
+
+        public double UserErrorKM
+        {
+            get => _userErrorKM;
+            set => _userErrorKM = value;
+        }
+
+        public int NumQuestions
+        {
+            get => (_questions != null ? _questions.Count : 0);
+        }
+
+        public Question CurrentQuestion
+        {
+            get => _currentQuestion;
+            set
+            {
+                if (_currentQuestion != value)
+                {
+                    _currentQuestion = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsCorrect
+        {
+            get => _isCorrect;
+            set
+            {
+                _isCorrect = value;
+                OnPropertyChanged();
+                Feedback = new Feedback()
+                {
+                    IsCorrect = value,
+                    Distance = UserErrorKM,
+                    Answer = CurrentQuestion.Answer,
+                    FunFact = "This is where the fun fact goes if we decide to add one in."
+                };
+            }
+        }
+
+        public Geometry ZoomToGeometry
+        {
+            get => _zoomToGeometry;
+            set => _zoomToGeometry = value;
+        }
+        #endregion
+
+        #region Commands
         public ICommand ChangeDifficultyCommand
         {
             get
@@ -248,59 +301,7 @@ namespace GeoTrivia
                     }));
             }
         }
-
-        public GraphicsOverlayCollection GraphicsOverlay
-        {
-            get => _graphicsOverlays;
-            set => _graphicsOverlays = value;
-        }
-
-        public double UserErrorKM
-        {
-            get => _userErrorKM;
-            set => _userErrorKM = value;
-        }
-
-        public int NumQuestions
-        {
-            get => (_questions != null ? _questions.Count : 0);
-        }
-
-        public Question CurrentQuestion
-        {
-            get => _currentQuestion;
-            set
-            {
-                if (_currentQuestion != value)
-                {
-                    _currentQuestion = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public bool IsCorrect
-        {
-            get => _isCorrect;
-            set
-            {
-                _isCorrect = value;
-                OnPropertyChanged();
-                Feedback = new Feedback()
-                {
-                    IsCorrect = value,
-                    Distance = UserErrorKM,
-                    Answer = CurrentQuestion.Answer,
-                    FunFact = "This is where the fun fact goes if we decide to add one in."
-                };
-            }
-        }
-
-        public Geometry ZoomToGeometry
-        {
-            get => _zoomToGeometry;
-            set => _zoomToGeometry = value;
-        }
+        #endregion
 
         /// <summary>
         /// Raises the <see cref="SceneViewModel.PropertyChanged" /> event

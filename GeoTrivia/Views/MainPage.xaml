@@ -98,11 +98,6 @@
                         </Grid.RowDefinitions>
                         <TextBlock Text="Easy" Grid.Row="0" FontWeight="Bold" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
                         <TextBlock Text="Denial is a river in Egypt, right?" Grid.Row="1" Foreground="White" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                        <!--<i:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Tapped">
-                                <core:InvokeCommandAction Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Easy"/>
-                            </core:EventTriggerBehavior>
-                        </i:Interaction.Behaviors>-->
                     </Grid>
                 </Button>
                 <Button IsTabStop="True" TabIndex="1" Height="150" Width="250" Background="#ff4f00" Margin="30" Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Medium">
@@ -118,11 +113,6 @@
                         </Grid.RowDefinitions>
                         <TextBlock Text="Medium" Grid.Row="0" FontWeight="Bold" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
                         <TextBlock Text="I can get there from here." Grid.Row="1" Foreground="White" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                        <!--<i:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Tapped">
-                                <core:InvokeCommandAction Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Medium"/>
-                            </core:EventTriggerBehavior>
-                        </i:Interaction.Behaviors>-->
                     </Grid>
                 </Button>
                 <Button IsTabStop="True" TabIndex="2" Height="150" Width="250" Background="#ff496f" Margin="30"  Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Hard">
@@ -138,11 +128,6 @@
                         </Grid.RowDefinitions>
                         <TextBlock Text="Hard" Grid.Row="0" FontWeight="Bold" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White"/>
                         <TextBlock Text="You got Mercator in my WGS84." Grid.Row="1" Foreground="White" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                        <!--<i:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Tapped">
-                                <core:InvokeCommandAction Command="{x:Bind ViewModel.ChangeDifficultyCommand}" CommandParameter="Hard"/>
-                            </core:EventTriggerBehavior>
-                        </i:Interaction.Behaviors>-->
                     </Grid>
                 </Button>
             </StackPanel>
@@ -155,11 +140,6 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Start Game" FontWeight="Bold" FontSize="30" Foreground="White" Margin="15, 10, 0, 10"/>
                 <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE72a;" Foreground="White" FontSize="30" Margin="10, 20, 15, 10"/>
-                <!--<i:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Tapped">
-                        <core:InvokeCommandAction Command="{x:Bind ViewModel.StartGameCommand}" CommandParameter="Medium"/>
-                    </core:EventTriggerBehavior>
-                </i:Interaction.Behaviors>-->
             </StackPanel>
         </Button>
 
@@ -178,11 +158,6 @@
                     <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE72a;" Foreground="White" FontSize="30" Margin="20, 30, 20, 20"/>
                 </StackPanel>
             </Button>
-            <!--<i:Interaction.Behaviors>
-                <core:EventTriggerBehavior EventName="Tapped">
-                    <core:InvokeCommandAction Command="{x:Bind ViewModel.NextQuestionCommand, Mode=OneWay}"/>
-                </core:EventTriggerBehavior>
-            </i:Interaction.Behaviors>-->
         </StackPanel>
         
         <!-- Game Over panel -->

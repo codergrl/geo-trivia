@@ -13,15 +13,15 @@ namespace GeoTrivia
 		public MainPage()
 		{
 			this.InitializeComponent();
-            //SceneView.Focus(Windows.UI.Xaml.FocusState.Keyboard);
+
             ViewModel.GraphicsOverlay = SceneView.GraphicsOverlays;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             ViewModel.Scene.Loaded += Scene_Loaded;
-
 		}
 
         private void Scene_Loaded(object sender, System.EventArgs e)
         {
+            // Set initial viewpoint
             SceneView.SetViewpoint(new Viewpoint(0.0, 0.0, 25000000.0));
         }
 
@@ -37,6 +37,7 @@ namespace GeoTrivia
             {
                 if (ViewModel.GameMode == "Playing")
                 {
+                    // Reset viewpoint
                     SceneView.SetViewpointAsync(new Viewpoint(0.0, 0.0, 50000000.0), new System.TimeSpan(0, 0, 1));
                 }
             }
