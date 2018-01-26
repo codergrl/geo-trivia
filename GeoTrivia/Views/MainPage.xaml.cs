@@ -15,7 +15,14 @@ namespace GeoTrivia
 			this.InitializeComponent();
             ViewModel.GraphicsOverlay = SceneView.GraphicsOverlays;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            ViewModel.Scene.Loaded += Scene_Loaded;
 		}
+
+        private void Scene_Loaded(object sender, System.EventArgs e)
+        {
+            SceneView.SetViewpoint(new Viewpoint(0.0, 0.0, 25000000.0));
+        }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
