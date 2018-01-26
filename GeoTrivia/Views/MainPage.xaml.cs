@@ -23,6 +23,10 @@ namespace GeoTrivia
             {
                 var viewpoint = SceneView.GetCurrentViewpoint(ViewpointType.CenterAndScale);
                 ViewModel.UserAnswer = viewpoint.TargetGeometry as MapPoint;
+
+                var geom = ViewModel.CurrentQuestion.Geometry;
+                var bufferedGeom = GeometryEngine.Buffer(geom, geom.Extent.Width);
+                SceneView.SetViewpointAsync(new Viewpoint(bufferedGeom), new System.TimeSpan(0, 0, 3));
             }
         }
 

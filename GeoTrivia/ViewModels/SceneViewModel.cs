@@ -135,15 +135,15 @@ namespace GeoTrivia
                         switch (x)
                         {
                             case "Easy":
-                                Scene.Basemap = new Basemap(new Uri("https://www.arcgis.com/home/webmap/viewer.html?webmap=86265e5a4bbb4187a59719cf134e0018"));
+                                Scene.Basemap = Basemap.CreateImageryWithLabels();
                                 Difficulty = 1;
                                 break;
                             case "Medium":
-                                Scene.Basemap = new Basemap(new Uri("https://www.arcgis.com/home/webmap/viewer.html?webmap=68a4f59815c745eeb2fa161f6ea0c112"));
+                                Scene.Basemap = Basemap.CreateLightGrayCanvas();
                                 Difficulty = 2;
                                 break;
                             case "Hard":
-                                Scene.Basemap = new Basemap(new Uri("https://www.arcgis.com/home/webmap/viewer.html?useExisting=1&layers=c4ec722a1cd34cf0a23904aadf8923a0"));
+                                Scene.Basemap = Basemap.CreateImagery();
                                 Difficulty = 3;
                                 break;
                         }
@@ -258,14 +258,16 @@ namespace GeoTrivia
 
         private void InitializeOverlays()
         {
-            var outlineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Dash, Windows.UI.Color.FromArgb(128, 255, 255, 255), 5.0);
+            byte opacity = 180;
 
-            var correctSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, Windows.UI.Color.FromArgb(200, 0, 255, 128), outlineSymbol);
+            var outlineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Dash, Windows.UI.Color.FromArgb(255, 255, 255, 255), 5.0);
+
+            var correctSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, Windows.UI.Color.FromArgb(opacity, 0, 255, 128), outlineSymbol);
             _correctAnswerOverlay = new GraphicsOverlay();
             _correctAnswerOverlay.Renderer = new SimpleRenderer(correctSymbol);
             GraphicsOverlay.Add(_correctAnswerOverlay);
 
-            var incorrectSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, Windows.UI.Color.FromArgb(200, 255, 0, 0), outlineSymbol);
+            var incorrectSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, Windows.UI.Color.FromArgb(opacity, 255, 0, 0), outlineSymbol);
             _incorrectAnswerOverlay = new GraphicsOverlay();
             _incorrectAnswerOverlay.Renderer = new SimpleRenderer(incorrectSymbol);
             GraphicsOverlay.Add(_incorrectAnswerOverlay);
