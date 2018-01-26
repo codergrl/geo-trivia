@@ -57,7 +57,6 @@ namespace GeoTrivia
         private Question _currentQuestion = null;
         private int _idx = -1;
         private bool _isCorrect;
-        private double _userErrorKM = 0;
         private Feedback _feedback;
         private Geometry _zoomToGeometry = null;
         private String _endOfGameMessage = "";
@@ -188,11 +187,11 @@ namespace GeoTrivia
             set => _graphicsOverlays = value;
         }
 
-        public double UserErrorKM
-        {
-            get => _userErrorKM;
-            set => _userErrorKM = value;
-        }
+        public double UserErrorKM { get; set; }
+
+        public int NumBufferAttempts { get; set; }
+
+        public int PointsEarned { get; set; }
 
         public int NumQuestions
         {
@@ -222,6 +221,8 @@ namespace GeoTrivia
                 Feedback = new Feedback()
                 {
                     IsCorrect = value,
+                    NumBufferAttempts = NumBufferAttempts,
+                    Points = PointsEarned,
                     Distance = UserErrorKM,
                     Answer = CurrentQuestion.Answer,
                     FunFact = "This is where the fun fact goes if we decide to add one in."
@@ -362,7 +363,7 @@ namespace GeoTrivia
                 }
                 else
                 {
-                    EndOfGameMessage = "Do you want a job?  You got " + Convert.ToString(Points) + " Points!  That's " + Convert.ToString(Math.Round(percentCorrect)) + "%";
+                    EndOfGameMessage = "You're hired!  You got " + Convert.ToString(Points) + " Points!  That's " + Convert.ToString(Math.Round(percentCorrect)) + "%";
                 }
 
                 GameMode = "GameOver";
@@ -409,7 +410,9 @@ namespace GeoTrivia
                     _correctAnswerOverlay.Graphics.Add(new Graphic(currentHightlight));
                 }
 
-                Points += (Difficulty * ((NUM_BUFFER_ATTEMPTS + 1) - i));
+                NumBufferAttempts = i;
+                PointsEarned = (Difficulty * ((NUM_BUFFER_ATTEMPTS + 1) - i));
+                Points += PointsEarned;
                 _zoomToGeometry = GeometryEngine.Buffer(actualGeometry, actualGeometry.Extent.Width);
             }
             else

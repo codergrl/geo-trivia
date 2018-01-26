@@ -39,7 +39,15 @@ namespace GeoTrivia.Converters
             {
                 if (feedback.IsCorrect == true)
                 {
-                    return "Nailed it!";
+                    var message = "";
+                    switch (feedback.NumBufferAttempts)
+                    {
+                        case 1: message = "Nailed it!"; break;
+                        case 2: message = "Good job!"; break;
+                        default: message = "Close enough!"; break;
+                    }
+
+                    return string.Format("{0}  You earned {1} points.", message, feedback.Points);
                 }
                 else
                 {

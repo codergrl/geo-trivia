@@ -24,6 +24,8 @@ namespace GeoTrivia
     public class Feedback
     {
         public bool IsCorrect { get; set; }
+        public int NumBufferAttempts { get; set; }
+        public int Points { get; set; }
         public double Distance { get; set; }
         public string Answer { get; set; }
         public string FunFact { get; set; }
