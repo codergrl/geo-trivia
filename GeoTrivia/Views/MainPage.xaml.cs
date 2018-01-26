@@ -13,6 +13,7 @@ namespace GeoTrivia
 		public MainPage()
 		{
 			this.InitializeComponent();
+            ViewModel.GraphicsOverlay = SceneView.GraphicsOverlays;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
 
