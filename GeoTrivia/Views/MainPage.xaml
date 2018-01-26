@@ -20,7 +20,7 @@
             <converters:IntToPointsStringConverter x:Key="IntToPointsStringConverter"/>
         </ResourceDictionary>
     </Page.Resources>
-    <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="33*"/>
             <RowDefinition Height="33*"/>
