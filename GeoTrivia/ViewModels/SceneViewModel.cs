@@ -69,7 +69,7 @@ namespace GeoTrivia
 
         private async Task InitializeAsync()
         {
-            Scene = new Scene(Basemap.CreateImageryWithLabels());
+            Scene = new Scene(Basemap.CreateNationalGeographic());
             LoadQuestions();
         }
 
