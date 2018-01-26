@@ -238,6 +238,16 @@ namespace GeoTrivia
 
         public async void NextQuestion()
         {
+            if (_correctAnswerOverlay != null)
+            {
+                _correctAnswerOverlay.Graphics.Clear();
+            }
+
+            if (_incorrectAnswerOverlay != null)
+            {
+                _incorrectAnswerOverlay.Graphics.Clear();
+            }
+
             _idx += 1;
             if (_idx < _questions.Count)
             {
